@@ -17,12 +17,3 @@ JUnit 5 para pruebas unitarias
 Instalación
 Clona este repositorio.
 
-Compila el proyecto usando Maven o Gradle.
-
-Ejecuta las pruebas con el comando:
-
-bash
-Копировать код
-mvn test
-Pruebas
-Se han implementado pruebas unitarias para verificar el comportamiento de las clases JourneyRealizeHandler, PMVehicle y JourneyService utilizando JUnit 5.
