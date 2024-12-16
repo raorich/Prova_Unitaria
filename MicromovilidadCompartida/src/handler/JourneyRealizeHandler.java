@@ -1,8 +1,14 @@
 package handler;
 
 import exceptions.ConnectException;
+import services.Server;
+import services.smartfeatures.UnbondedBTSignal;
 
 public class JourneyRealizeHandler {
+
+    private Server server;
+    private UnbondedBTSignal btSignal;
+
 
     public String broadcastStationID(String statID) throws ConnectException {
         if (statID == null || statID.isEmpty()) {
