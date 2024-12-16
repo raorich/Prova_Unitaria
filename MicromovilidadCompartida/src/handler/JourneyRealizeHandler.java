@@ -1,14 +1,28 @@
 package handler;
 
-import exceptions.ConnectException;
-import services.Server;
-import services.smartfeatures.UnbondedBTSignal;
+import exceptions.*;;
+import services.*;
+import services.smartfeatures.*;
+import micromobility.*;
+import domain.*;
+import data.*;
+
+import java.time.LocalDateTime;
+import java.math.BigDecimal;
 
 public class JourneyRealizeHandler {
 
     private Server server;
     private UnbondedBTSignal btSignal;
+    private PMVehicle pmVehicle;
+    private JourneyService journeyService;
 
+    public JourneyRealizeHandler(Server server, UnbondedBTSignal btSignal, PMVehicle pmVehicle, JourneyService journeyService) {
+        this.server = server;
+        this.btSignal = btSignal;
+        this.pmVehicle = pmVehicle;
+        this.journeyService = journeyService;
+    }
 
     public String broadcastStationID(String statID) throws ConnectException {
         if (statID == null || statID.isEmpty()) {
@@ -18,22 +32,41 @@ public class JourneyRealizeHandler {
         return statID;
     }
 
-    public void scanQR(String qrData) throws ConnectException {
+    public void scanQR(String qrData) throws ConnectException, InvalidPairingArgsException, PMVNotAvailException {
         if (qrData == null || qrData.isEmpty()) {
-            throw new ConnectException("Error al escanear el QR.");
+            throw new InvalidPairingArgsException("Datos del QR inválidos.");
         }
-        System.out.println("QR escaneado correctamente: " + qrData);
+
+        // Decodificar el QR para obtener el ID del vehículo
+        VehicleID vehID = new VehicleID(qrData);
+        // Verificar la disponibilidad del vehículo
+        server.checkPMVAvail(vehID);
+
+        // Si todo es correcto, se cambia el estado del vehículo
+        pmVehicle.setUnderWay();
+        System.out.println("Vehículo en movimiento.");
     }
 
     public void startDriving() throws ConnectException {
-        System.out.println("Desplazamiento iniciado.");
+        pmVehicle.setUnderWay(); // Cambiar el estado del vehículo
+        journeyService.setServiceInit(LocalDateTime.now()); // Iniciar el trayecto
+        System.out.println("Trayecto iniciado.");
     }
 
     public void stopDriving() throws ConnectException {
-        System.out.println("Desplazamiento detenido.");
+        pmVehicle.setAvailb(); // Cambiar el estado del vehículo
+        journeyService.setServiceFinish(LocalDateTime.now(), 10.5f, 30, 21.0f, new BigDecimal("15.00")); // Finalizar el trayecto
+        System.out.println("Trayecto finalizado.");
     }
 
-    public void unPairVehicle() throws ConnectException {
-        System.out.println("Vehículo desemparejado correctamente.");
+    // Métodos internos para cálculos
+    private void calculateValues(double distance, int duration, float avgSpeed) {
+        // Aquí iría la lógica para calcular valores del trayecto
+        System.out.println("Calculando valores del trayecto...");
+    }
+
+    private void calculateImport(float distance, int duration, float avgSpeed) {
+        // Aquí iría la lógica para calcular el importe del servicio
+        System.out.println("Calculando el importe...");
     }
 }

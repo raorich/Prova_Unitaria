@@ -1,4 +1,5 @@
 package services;
+import domain.JourneyService;
 import exceptions.*;
 import data.*;
 import java.math.BigDecimal;
