@@ -1,6 +1,6 @@
 package handler;
 
-import exceptions.*;;
+import exceptions.*;
 import services.*;
 import services.smartfeatures.*;
 import micromobility.*;
@@ -37,14 +37,34 @@ public class JourneyRealizeHandler {
             throw new InvalidPairingArgsException("Datos del QR inválidos.");
         }
 
-        // Decodificar el QR para obtener el ID del vehículo
-        VehicleID vehID = new VehicleID(qrData);
-        // Verificar la disponibilidad del vehículo
-        server.checkPMVAvail(vehID);
+        try {
+            // Generar el VehicleID utilizando el hashCode del qrData
+            VehicleID vehID = new VehicleID(String.valueOf(qrData.hashCode()));
 
-        // Si todo es correcto, se cambia el estado del vehículo
-        pmVehicle.setUnderWay();
-        System.out.println("Vehículo en movimiento.");
+            // Verificar la disponibilidad del vehículo
+            server.checkPMVAvail(vehID);
+
+            // Crear una nueva instancia de JourneyService
+            journeyService = new JourneyService();
+            journeyService.setServiceInit(LocalDateTime.now());
+
+            // Actualizar valores en JourneyService
+            journeyService.setOriginPoint(currentLocation); // Se debe obtener la ubicación actual
+            journeyService.setOriginStationID(originStationID); // Identificar la estación de origen
+
+            // Establecer conexión Bluetooth
+            pmVehicle.setNotAvailb(); // Cambiar el estado del vehículo a NotAvailable
+            System.out.println("Vehículo vinculado y listo para iniciar desplazamiento.");
+
+            // Registrar la vinculación en el servidor
+            server.registerPairing(currentUser, vehID, originStationID, currentLocation, LocalDateTime.now());
+        } catch (InvalidPairingArgsException e) {
+            throw new InvalidPairingArgsException("Error en los argumentos al registrar la vinculación.");
+        } catch (PMVNotAvailException e) {
+            throw new PMVNotAvailException("El vehículo no está disponible.");
+        } catch (ConnectException e) {
+            throw new ConnectException("Error de conexión con el servidor o Bluetooth.");
+        }
     }
 
     public void startDriving() throws ConnectException {

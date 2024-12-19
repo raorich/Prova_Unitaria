@@ -38,4 +38,36 @@ class UserAccountTest {
         UserAccount account = new UserAccount("user123");
         assertEquals("UserAccount{accountId='user123'}", account.toString());
     }
+    @Test
+    void testEquals_SameObject() {
+        UserAccount account = new UserAccount("User123");
+        assertTrue(account.equals(account)); // Reflexividad
+    }
+
+    @Test
+    void testEquals_NullObject() {
+        UserAccount account = new UserAccount("User123");
+        assertFalse(account.equals(null)); // No debe ser igual a null
+    }
+
+    @Test
+    void testEquals_DifferentClass() {
+        UserAccount account = new UserAccount("User123");
+        String notAUserAccount = "NotAUserAccount";
+        assertFalse(account.equals(notAUserAccount)); // No debe ser igual a un objeto de otra clase
+    }
+
+    @Test
+    void testEquals_DifferentAccountId() {
+        UserAccount account1 = new UserAccount("User123");
+        UserAccount account2 = new UserAccount("User456");
+        assertFalse(account1.equals(account2)); // IDs diferentes, no deben ser iguales
+    }
+
+    @Test
+    void testEquals_EqualObjects() {
+        UserAccount account1 = new UserAccount("User123");
+        UserAccount account2 = new UserAccount("User123");
+        assertTrue(account1.equals(account2)); // Mismos IDs, deben ser iguales
+    }
 }

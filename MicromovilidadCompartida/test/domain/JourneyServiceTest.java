@@ -13,7 +13,6 @@ class JourneyServiceTest {
         LocalDateTime now = LocalDateTime.now();
 
         journeyService.setServiceInit(now);
-
         assertNotNull(journeyService.getInitDate());
         assertTrue(journeyService.isInProgress());
     }

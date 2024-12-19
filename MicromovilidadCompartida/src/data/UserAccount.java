@@ -9,7 +9,7 @@ public final class UserAccount {
         }
         if (!accountId.matches("[a-zA-Z0-9]{3,20}")) {
             throw new IllegalArgumentException("UserAccount ID must be alphanumeric and 3-20 characters long");
-        }
+        } //una de propia
         this.accountId = accountId;
     }
 
