@@ -9,6 +9,10 @@ import data.*;
 
 import java.time.LocalDateTime;
 import java.math.BigDecimal;
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
+import java.io.File;
+
 
 public class JourneyRealizeHandler {
 
@@ -16,12 +20,14 @@ public class JourneyRealizeHandler {
     private UnbondedBTSignal btSignal;
     private PMVehicle pmVehicle;
     private JourneyService journeyService;
+    private QRDecoder qrDecoder;
 
-    public JourneyRealizeHandler(Server server, UnbondedBTSignal btSignal, PMVehicle pmVehicle, JourneyService journeyService) {
+    public JourneyRealizeHandler(Server server, UnbondedBTSignal btSignal, PMVehicle pmVehicle, JourneyService journeyService, QRDecoder qrDecoder) {
         this.server = server;
         this.btSignal = btSignal;
         this.pmVehicle = pmVehicle;
         this.journeyService = journeyService;
+        this.qrDecoder = this.qrDecoder;
     }
 
     public String broadcastStationID(String statID) throws ConnectException {
@@ -32,14 +38,16 @@ public class JourneyRealizeHandler {
         return statID;
     }
 
-    public void scanQR(String qrData) throws ConnectException, InvalidPairingArgsException, PMVNotAvailException {
-        if (qrData == null || qrData.isEmpty()) {
+
+    public void scanQR(String imagePath) throws ConnectException, InvalidPairingArgsException, PMVNotAvailException, CorruptedImgException {
+        if (imagePath == null || imagePath.trim().isEmpty()) {
             throw new InvalidPairingArgsException("Datos del QR inválidos.");
         }
 
         try {
             // Generar el VehicleID utilizando el hashCode del qrData
-            VehicleID vehID = new VehicleID(String.valueOf(qrData.hashCode()));
+            BufferedImage qrImage = loadImageFromPath(imagePath);
+            VehicleID vehID = qrDecoder.getVehicleID(qrImage);
 
             // Verificar la disponibilidad del vehículo
             server.checkPMVAvail(vehID);
@@ -49,21 +57,27 @@ public class JourneyRealizeHandler {
             journeyService.setServiceInit(LocalDateTime.now());
 
             // Actualizar valores en JourneyService
-            journeyService.setOriginPoint(currentLocation); // Se debe obtener la ubicación actual
-            journeyService.setOriginStationID(originStationID); // Identificar la estación de origen
+            //journeyService.setOriginPoint(currentLocation); // Se debe obtener la ubicación actual
+            //journeyService.setOriginStationID(originStationID); // Identificar la estación de origen
 
             // Establecer conexión Bluetooth
             pmVehicle.setNotAvailb(); // Cambiar el estado del vehículo a NotAvailable
             System.out.println("Vehículo vinculado y listo para iniciar desplazamiento.");
-
-            // Registrar la vinculación en el servidor
-            server.registerPairing(currentUser, vehID, originStationID, currentLocation, LocalDateTime.now());
-        } catch (InvalidPairingArgsException e) {
-            throw new InvalidPairingArgsException("Error en los argumentos al registrar la vinculación.");
         } catch (PMVNotAvailException e) {
             throw new PMVNotAvailException("El vehículo no está disponible.");
         } catch (ConnectException e) {
             throw new ConnectException("Error de conexión con el servidor o Bluetooth.");
+        } catch (CorruptedImgException e) {
+            throw e;  // Aquí es donde modificamos para lanzar directamente la excepción CorruptedImgException
+        }
+    }
+
+    // Método para cargar la imagen
+    private BufferedImage loadImageFromPath(String imagePath) throws CorruptedImgException {
+        try {
+            return ImageIO.read(new File(imagePath));
+        } catch (Exception e) {
+            throw new CorruptedImgException("No se pudo cargar la imagen desde la ruta: " + imagePath);
         }
     }
 

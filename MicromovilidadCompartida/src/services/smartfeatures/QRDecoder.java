@@ -4,5 +4,6 @@ import exceptions.*;
 import data.*;
 
 public interface QRDecoder {
-    VehicleID getVehicleID(BufferedImage QRImg) throws CorruptedImgException;
+        VehicleID getVehicleID(BufferedImage QRImg) throws CorruptedImgException;
+
 }

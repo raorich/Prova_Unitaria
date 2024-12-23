@@ -9,7 +9,6 @@ public interface Server {// External service for the persistent storage
     /**
      * External services involved in the shared micromobility system
      */
-
         // To be invoked by the use case controller
         void checkPMVAvail(VehicleID vhID) throws PMVNotAvailException, ConnectException;
         void registerPairing(UserAccount user, VehicleID veh, StationID st, GeographicPoint loc, LocalDateTime date) throws InvalidPairingArgsException, ConnectException;
