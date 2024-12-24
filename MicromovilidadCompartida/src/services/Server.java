@@ -17,5 +17,5 @@ public interface Server {// External service for the persistent storage
         void setPairing(UserAccount user, VehicleID veh, StationID st, GeographicPoint loc, LocalDateTime date);
         void unPairRegisterService(JourneyService s) throws PairingNotFoundException;
         void registerLocation(VehicleID veh, StationID st);
-
+        void registerPayment(ServiceID servID, UserAccount user, BigDecimal imp, char payMeth) throws ConnectException;
 }
