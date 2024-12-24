@@ -63,11 +63,22 @@
 
                     pmVehicle.setNotAvailb();
 
-                    server.registerPairing(user,vehID,station,location,LocalDateTime.now());
+                    journeyService = new JourneyService();
+                    LocalDateTime currentDateTime = LocalDateTime.now();
+                    journeyService.setServiceInit(currentDateTime); // Iniciar el trayecto con la hora actual
+                    // Establecer la estación de origen y ubicación
+                    journeyService.setOriginPoint(location); // Ubicación del conductor
+                    journeyService.setOrgStatID(station); // Estación de origen
+                    // Asociar los datos con el JourneyService
+                    journeyService.setUserAccount(user);  // Asociar la cuenta de usuario
+                    journeyService.setVehicleID(vehID);  // Asociar el vehículo
+
+                    server.registerPairing(user,vehID,station,location,currentDateTime);
 
 
                     // Completar flujo
                     System.out.println("Emparejamiento completado con el vehículo: " + vehID.getVehicleId());
+                    System.out.println("Detalles del emparejamiento: Usuario " + user.getAccountId() + ", Estación " + station.getId() + ", Ubicación " + location);
                 } catch (PMVNotAvailException | CorruptedImgException | ConnectException e) {
                     throw e;
                 }

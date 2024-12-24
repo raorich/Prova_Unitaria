@@ -2,6 +2,7 @@ package domain;
 
 import java.time.LocalDateTime;
 import java.math.BigDecimal;
+import data.*;
 
 public class JourneyService {
     private LocalDateTime initDate;
@@ -12,11 +13,17 @@ public class JourneyService {
     private float avgSpeed;
     private BigDecimal importAmount;
 
+    // Nuevos atributos
+    private StationID orgStatID;  // Estación de origen
+    private GeographicPoint originPoint;  // Ubicación del conductor
+    private UserAccount userAccount;  // Cuenta de usuario
+    private VehicleID vehicleID;  // ID del vehículo
+
     public JourneyService() {
         this.inProgress = false;
     }
 
-    // Setters
+    // Setters existentes
     public void setServiceInit(LocalDateTime initDate) {
         this.initDate = initDate;
         this.inProgress = true;
@@ -29,6 +36,23 @@ public class JourneyService {
         this.avgSpeed = avgSpeed;
         this.importAmount = importAmount;
         this.inProgress = false;
+    }
+
+    // Nuevos setters para los atributos adicionales
+    public void setOrgStatID(StationID orgStatID) {
+        this.orgStatID = orgStatID;
+    }
+
+    public void setOriginPoint(GeographicPoint originPoint) {
+        this.originPoint = originPoint;
+    }
+
+    public void setUserAccount(UserAccount userAccount) {
+        this.userAccount = userAccount;
+    }
+
+    public void setVehicleID(VehicleID vehicleID) {
+        this.vehicleID = vehicleID;
     }
 
     // Getters
@@ -58,5 +82,22 @@ public class JourneyService {
 
     public BigDecimal getImportAmount() {
         return importAmount;
+    }
+
+    // Nuevos getters para los atributos adicionales
+    public StationID getOrgStatID() {
+        return orgStatID;
+    }
+
+    public GeographicPoint getOriginPoint() {
+        return originPoint;
+    }
+
+    public UserAccount getUserAccount() {
+        return userAccount;
+    }
+
+    public VehicleID getVehicleID() {
+        return vehicleID;
     }
 }
