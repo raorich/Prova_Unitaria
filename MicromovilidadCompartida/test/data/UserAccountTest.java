@@ -1,10 +1,22 @@
 package data;
 
 import data.UserAccount;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class UserAccountTest {
+
+    private static UserAccount validAccount1;
+    private static UserAccount validAccount2;
+    private static UserAccount differentAccount;
+
+    @BeforeAll
+    static void setUp() {
+        validAccount1 = new UserAccount("user123");
+        validAccount2 = new UserAccount("user123");
+        differentAccount = new UserAccount("User456");
+    }
 
     @Test
     void testValidUserAccount() {
@@ -27,47 +39,38 @@ class UserAccountTest {
 
     @Test
     void testEqualsAndHashCode() {
-        UserAccount account1 = new UserAccount("user123");
-        UserAccount account2 = new UserAccount("user123");
-        assertEquals(account1, account2);
-        assertEquals(account1.hashCode(), account2.hashCode());
+        assertEquals(validAccount1, validAccount2);
+        assertEquals(validAccount1.hashCode(), validAccount2.hashCode());
     }
 
     @Test
     void testToString() {
-        UserAccount account = new UserAccount("user123");
-        assertEquals("UserAccount{accountId='user123'}", account.toString());
+        assertEquals("UserAccount{accountId='user123'}", validAccount1.toString());
     }
+
     @Test
     void testEquals_SameObject() {
-        UserAccount account = new UserAccount("User123");
-        assertTrue(account.equals(account)); // Reflexividad
+        assertTrue(validAccount1.equals(validAccount1)); // Reflexividad
     }
 
     @Test
     void testEquals_NullObject() {
-        UserAccount account = new UserAccount("User123");
-        assertFalse(account.equals(null)); // No debe ser igual a null
+        assertFalse(validAccount1.equals(null)); // No debe ser igual a null
     }
 
     @Test
     void testEquals_DifferentClass() {
-        UserAccount account = new UserAccount("User123");
         String notAUserAccount = "NotAUserAccount";
-        assertFalse(account.equals(notAUserAccount)); // No debe ser igual a un objeto de otra clase
+        assertFalse(validAccount1.equals(notAUserAccount)); // No debe ser igual a un objeto de otra clase
     }
 
     @Test
     void testEquals_DifferentAccountId() {
-        UserAccount account1 = new UserAccount("User123");
-        UserAccount account2 = new UserAccount("User456");
-        assertFalse(account1.equals(account2)); // IDs diferentes, no deben ser iguales
+        assertFalse(validAccount1.equals(differentAccount)); // IDs diferentes, no deben ser iguales
     }
 
     @Test
     void testEquals_EqualObjects() {
-        UserAccount account1 = new UserAccount("User123");
-        UserAccount account2 = new UserAccount("User123");
-        assertTrue(account1.equals(account2)); // Mismos IDs, deben ser iguales
+        assertTrue(validAccount1.equals(validAccount2)); // Mismos IDs, deben ser iguales
     }
 }

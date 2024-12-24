@@ -1,16 +1,29 @@
 package data;
 
 import data.GeographicPoint;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class GeographicPointTest {
 
+    private static GeographicPoint validPoint1;
+    private static GeographicPoint validPoint2;
+    private static GeographicPoint validPointDifferentLatitude;
+    private static GeographicPoint validPointDifferentLongitude;
+
+    @BeforeAll
+    static void setUp() {
+        validPoint1 = new GeographicPoint(45.0f, 90.0f);
+        validPoint2 = new GeographicPoint(45.0f, 90.0f);
+        validPointDifferentLatitude = new GeographicPoint(30.0f, 90.0f);
+        validPointDifferentLongitude = new GeographicPoint(45.0f, 80.0f);
+    }
+
     @Test
     void testValidGeographicPoint() {
-        GeographicPoint point = new GeographicPoint(45.0f, 90.0f);
-        assertEquals(45.0f, point.getLatitude());
-        assertEquals(90.0f, point.getLongitude());
+        assertEquals(45.0f, validPoint1.getLatitude());
+        assertEquals(90.0f, validPoint1.getLongitude());
     }
 
     @Test
@@ -33,55 +46,44 @@ class GeographicPointTest {
 
     @Test
     void testEqualsAndHashCode() {
-        GeographicPoint point1 = new GeographicPoint(45.0f, 90.0f);
-        GeographicPoint point2 = new GeographicPoint(45.0f, 90.0f);
-        assertEquals(point1, point2);
-        assertEquals(point1.hashCode(), point2.hashCode());
+        assertEquals(validPoint1, validPoint2);
+        assertEquals(validPoint1.hashCode(), validPoint2.hashCode());
     }
 
     @Test
     void testToString() {
-        GeographicPoint point = new GeographicPoint(45.0f, 90.0f);
-        assertEquals("GeographicPoint{latitude=45.0, longitude=90.0}", point.toString());
+        assertEquals("GeographicPoint{latitude=45.0, longitude=90.0}", validPoint1.toString());
     }
+
     @Test
     void testEqualsMethod_SameObject() {
-        GeographicPoint point = new GeographicPoint(45.0f, 90.0f);
-        assertTrue(point.equals(point)); // Reflexividad: debe ser igual a sí mismo
+        assertTrue(validPoint1.equals(validPoint1)); // Reflexividad: debe ser igual a sí mismo
     }
 
     @Test
     void testEqualsMethod_NullObject() {
-        GeographicPoint point = new GeographicPoint(45.0f, 90.0f);
-        assertFalse(point.equals(null)); // No debe ser igual a null
+        assertFalse(validPoint1.equals(null)); // No debe ser igual a null
     }
 
     @Test
     void testEqualsMethod_DifferentClass() {
-        GeographicPoint point = new GeographicPoint(45.0f, 90.0f);
         String notAGeographicPoint = "Not a GeographicPoint";
-        assertFalse(point.equals(notAGeographicPoint)); // No debe ser igual a un objeto de otra clase
+        assertFalse(validPoint1.equals(notAGeographicPoint)); // No debe ser igual a un objeto de otra clase
     }
 
     @Test
     void testEqualsMethod_DifferentLatitude() {
-        GeographicPoint point1 = new GeographicPoint(45.0f, 90.0f);
-        GeographicPoint point2 = new GeographicPoint(30.0f, 90.0f);
-        assertFalse(point1.equals(point2)); // Diferentes latitudes, deben ser diferentes
+        assertFalse(validPoint1.equals(validPointDifferentLatitude)); // Diferentes latitudes, deben ser diferentes
     }
 
     @Test
     void testEqualsMethod_DifferentLongitude() {
-        GeographicPoint point1 = new GeographicPoint(45.0f, 90.0f);
-        GeographicPoint point2 = new GeographicPoint(45.0f, 80.0f);
-        assertFalse(point1.equals(point2)); // Diferentes longitudes, deben ser diferentes
+        assertFalse(validPoint1.equals(validPointDifferentLongitude)); // Diferentes longitudes, deben ser diferentes
     }
 
     @Test
     void testEqualsMethod_EqualObjects() {
-        GeographicPoint point1 = new GeographicPoint(45.0f, 90.0f);
-        GeographicPoint point2 = new GeographicPoint(45.0f, 90.0f);
-        assertTrue(point1.equals(point2)); // Mismas coordenadas, deben ser iguales
+        assertTrue(validPoint1.equals(validPoint2)); // Mismas coordenadas, deben ser iguales
     }
-
 }
+

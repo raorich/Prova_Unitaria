@@ -1,10 +1,22 @@
 package data;
 
 import data.StationID;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class StationIDTest {
+
+    private static StationID validStationID1;
+    private static StationID validStationID2;
+    private static StationID differentStationID;
+
+    @BeforeAll
+    static void setUp() {
+        validStationID1 = new StationID("ABC123");
+        validStationID2 = new StationID("ABC123");
+        differentStationID = new StationID("DEF456");
+    }
 
     @Test
     void testValidStationID() {
@@ -27,48 +39,38 @@ class StationIDTest {
 
     @Test
     void testEqualsAndHashCode() {
-        StationID id1 = new StationID("Station1");
-        StationID id2 = new StationID("Station1");
-        assertEquals(id1, id2);
-        assertEquals(id1.hashCode(), id2.hashCode());
+        assertEquals(validStationID1, validStationID2);
+        assertEquals(validStationID1.hashCode(), validStationID2.hashCode());
     }
 
     @Test
     void testToString() {
-        StationID id = new StationID("Station1");
-        assertEquals("StationID{id='Station1'}", id.toString());
-    } //equals,tostring fer test
+        assertEquals("StationID{id='ABC123'}", validStationID1.toString());
+    }
 
     @Test
     void testEquals_SameObject() {
-        StationID stationID = new StationID("ABC123");
-        assertTrue(stationID.equals(stationID)); // Reflexividad
+        assertTrue(validStationID1.equals(validStationID1)); // Reflexividad
     }
 
     @Test
     void testEquals_NullObject() {
-        StationID stationID = new StationID("ABC123");
-        assertFalse(stationID.equals(null)); // No debe ser igual a null
+        assertFalse(validStationID1.equals(null)); // No debe ser igual a null
     }
 
     @Test
     void testEquals_DifferentClass() {
-        StationID stationID = new StationID("ABC123");
         String notAStationID = "NotAStationID";
-        assertFalse(stationID.equals(notAStationID)); // No debe ser igual a un objeto de otra clase
+        assertFalse(validStationID1.equals(notAStationID)); // No debe ser igual a un objeto de otra clase
     }
 
     @Test
     void testEquals_DifferentID() {
-        StationID stationID1 = new StationID("ABC123");
-        StationID stationID2 = new StationID("DEF456");
-        assertFalse(stationID1.equals(stationID2)); // IDs diferentes, no deben ser iguales
+        assertFalse(validStationID1.equals(differentStationID)); // IDs diferentes, no deben ser iguales
     }
 
     @Test
     void testEquals_EqualObjects() {
-        StationID stationID1 = new StationID("ABC123");
-        StationID stationID2 = new StationID("ABC123");
-        assertTrue(stationID1.equals(stationID2)); // Mismos IDs, deben ser iguales
+        assertTrue(validStationID1.equals(validStationID2)); // Mismos IDs, deben ser iguales
     }
 }

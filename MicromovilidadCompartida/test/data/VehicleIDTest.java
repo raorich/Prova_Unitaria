@@ -1,10 +1,22 @@
 package data;
 
 import data.VehicleID;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class VehicleIDTest {
+
+    private static VehicleID validVehicleID1;
+    private static VehicleID validVehicleID2;
+    private static VehicleID differentVehicleID;
+
+    @BeforeAll
+    static void setUp() {
+        validVehicleID1 = new VehicleID("V1234");
+        validVehicleID2 = new VehicleID("V1234");
+        differentVehicleID = new VehicleID("V5678");
+    }
 
     @Test
     void testValidVehicleID() {
@@ -27,47 +39,38 @@ class VehicleIDTest {
 
     @Test
     void testEqualsAndHashCode() {
-        VehicleID id1 = new VehicleID("V123");
-        VehicleID id2 = new VehicleID("V123");
-        assertEquals(id1, id2);
-        assertEquals(id1.hashCode(), id2.hashCode());
+        assertEquals(validVehicleID1, validVehicleID2);
+        assertEquals(validVehicleID1.hashCode(), validVehicleID2.hashCode());
     }
 
     @Test
     void testToString() {
-        VehicleID id = new VehicleID("V123");
-        assertEquals("VehicleID{vehicleId='V123'}", id.toString());
+        assertEquals("VehicleID{vehicleId='V1234'}", validVehicleID1.toString());
     }
+
     @Test
     void testEquals_SameObject() {
-        VehicleID vehicleID = new VehicleID("V1234");
-        assertTrue(vehicleID.equals(vehicleID)); // Reflexividad
+        assertTrue(validVehicleID1.equals(validVehicleID1)); // Reflexividad
     }
 
     @Test
     void testEquals_NullObject() {
-        VehicleID vehicleID = new VehicleID("V1234");
-        assertFalse(vehicleID.equals(null)); // No debe ser igual a null
+        assertFalse(validVehicleID1.equals(null)); // No debe ser igual a null
     }
 
     @Test
     void testEquals_DifferentClass() {
-        VehicleID vehicleID = new VehicleID("V1234");
         String notAVehicleID = "NotAVehicleID";
-        assertFalse(vehicleID.equals(notAVehicleID)); // No debe ser igual a un objeto de otra clase
+        assertFalse(validVehicleID1.equals(notAVehicleID)); // No debe ser igual a un objeto de otra clase
     }
 
     @Test
     void testEquals_DifferentVehicleId() {
-        VehicleID vehicleID1 = new VehicleID("V1234");
-        VehicleID vehicleID2 = new VehicleID("V5678");
-        assertFalse(vehicleID1.equals(vehicleID2)); // IDs diferentes, no deben ser iguales
+        assertFalse(validVehicleID1.equals(differentVehicleID)); // IDs diferentes, no deben ser iguales
     }
 
     @Test
     void testEquals_EqualObjects() {
-        VehicleID vehicleID1 = new VehicleID("V1234");
-        VehicleID vehicleID2 = new VehicleID("V1234");
-        assertTrue(vehicleID1.equals(vehicleID2)); // Mismos IDs, deben ser iguales
+        assertTrue(validVehicleID1.equals(validVehicleID2)); // Mismos IDs, deben ser iguales
     }
 }

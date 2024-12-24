@@ -1,10 +1,20 @@
 package data;
 
 import data.ServiceID;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ServiceIDTest {
+
+    private static ServiceID validServiceID1;
+    private static ServiceID validServiceID2;
+
+    @BeforeAll
+    static void setUp() {
+        validServiceID1 = new ServiceID("S1234");
+        validServiceID2 = new ServiceID("S5678");
+    }
 
     @Test
     void testValidServiceID() {
@@ -38,36 +48,31 @@ class ServiceIDTest {
         ServiceID id = new ServiceID("S123");
         assertEquals("ServiceID{serviceId='S123'}", id.toString());
     }
+
     @Test
     void testEquals_SameObject() {
-        ServiceID serviceID = new ServiceID("S1234");
-        assertTrue(serviceID.equals(serviceID)); // Reflexividad
+        assertTrue(validServiceID1.equals(validServiceID1)); // Reflexividad
     }
 
     @Test
     void testEquals_NullObject() {
-        ServiceID serviceID = new ServiceID("S1234");
-        assertFalse(serviceID.equals(null)); // No debe ser igual a null
+        assertFalse(validServiceID1.equals(null)); // No debe ser igual a null
     }
 
     @Test
     void testEquals_DifferentClass() {
-        ServiceID serviceID = new ServiceID("S1234");
         String notAServiceID = "NotAServiceID";
-        assertFalse(serviceID.equals(notAServiceID)); // No debe ser igual a un objeto de otra clase
+        assertFalse(validServiceID1.equals(notAServiceID)); // No debe ser igual a un objeto de otra clase
     }
 
     @Test
     void testEquals_DifferentServiceId() {
-        ServiceID serviceID1 = new ServiceID("S1234");
-        ServiceID serviceID2 = new ServiceID("S5678");
-        assertFalse(serviceID1.equals(serviceID2)); // IDs diferentes, no deben ser iguales
+        assertFalse(validServiceID1.equals(validServiceID2)); // IDs diferentes, no deben ser iguales
     }
 
     @Test
     void testEquals_EqualObjects() {
-        ServiceID serviceID1 = new ServiceID("S1234");
-        ServiceID serviceID2 = new ServiceID("S1234");
-        assertTrue(serviceID1.equals(serviceID2)); // Mismos IDs, deben ser iguales
+        ServiceID serviceIDDuplicate = new ServiceID("S1234");
+        assertTrue(validServiceID1.equals(serviceIDDuplicate)); // Mismos IDs, deben ser iguales
     }
 }
