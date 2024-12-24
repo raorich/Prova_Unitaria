@@ -2,6 +2,8 @@ package services;
 import domain.JourneyService;
 import exceptions.*;
 import data.*;
+import services.smartfeatures.QRDecoder;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -18,4 +20,6 @@ public interface Server {// External service for the persistent storage
         void unPairRegisterService(JourneyService s) throws PairingNotFoundException;
         void registerLocation(VehicleID veh, StationID st);
         void registerPayment(ServiceID servID, UserAccount user, BigDecimal imp, char payMeth) throws ConnectException;
+
+    QRDecoder getQRDecoder();
 }

@@ -1,53 +1,69 @@
 package handler;
 
-import exceptions.ConnectException;
+import data.VehicleID;
 import exceptions.CorruptedImgException;
-import exceptions.PMVNotAvailException;
-import handler.JourneyRealizeHandler;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import services.smartfeatures.SimulatedQRDecoder;
+
 import static org.junit.jupiter.api.Assertions.*;
 
-class JourneyRealizeHandlerTest {
+class SimulatedQRDecoderTest {
 
-    JourneyRealizeHandler handler = new JourneyRealizeHandler();
+    private SimulatedQRDecoder qrDecoder;
 
+    @BeforeEach
+    void setUp() {
+        // Inicializamos el QRDecoder
+        qrDecoder = new SimulatedQRDecoder();
+    }
+
+    // Caso válido: QR válido "qr_vehicle1.png" debería devolver el ID "V123"
     @Test
-    void testScanQR_invalidImage() {
-        String invalidImagePath = "path_to_invalid_image.png";
+    void testGetVehicleIDByImg_ValidQRCode() throws CorruptedImgException {
+        // Simulamos la imagen "qr_vehicle1.png"
+        String validImageName = "qr_vehicle1.png";
 
-        // Esperar que se lance una excepción CorruptedImgException
+        // Llamamos al método getVehicleIDByImg
+        VehicleID vehicleID = qrDecoder.getVehicleIDByImg(validImageName);
+
+        // Comprobamos que el ID del vehículo devuelto sea "V123"
+        assertEquals("V123", vehicleID.getVehicleId(), "El ID del vehículo debe ser V123 para qr_vehicle1.png");
+    }
+
+    // Caso inválido: QR inválido "qr_invalid.png" debería lanzar CorruptedImgException
+    @Test
+    void testGetVehicleIDByImg_InvalidQRCode() {
+        // Simulamos la imagen inválida "qr_invalid.png"
+        String invalidImageName = "qr_invalid.png";
+
+        // Verificamos que se lance la excepción CorruptedImgException
         assertThrows(CorruptedImgException.class, () -> {
-            handler.scanQR(invalidImagePath, "user123", "station456");
-        });
+            qrDecoder.getVehicleIDByImg(invalidImageName);
+        }, "Se esperaba que se lanzara una excepción CorruptedImgException para un QR inválido.");
     }
 
+    // Caso de imagen nula: Debe lanzar CorruptedImgException si se pasa null
     @Test
-    void testScanQR_vehicleNotAvailable() {
-        String qrPath = "path_to_qr_with_vehicle_not_available.png";
+    void testGetVehicleIDByImg_NullImageName() {
+        // Pasamos un nombre de archivo nulo
+        String nullImageName = null;
 
-        // Esperar que se lance una excepción PMVNotAvailException
-        assertThrows(PMVNotAvailException.class, () -> {
-            handler.scanQR(qrPath, "user123", "station456");
-        });
+        // Verificamos que se lance la excepción CorruptedImgException
+        assertThrows(CorruptedImgException.class, () -> {
+            qrDecoder.getVehicleIDByImg(nullImageName);
+        }, "Se esperaba que se lanzara una excepción CorruptedImgException para nombre de archivo nulo.");
     }
 
+    // Caso de nombre vacío: Debe lanzar CorruptedImgException si se pasa un nombre vacío
     @Test
-    void testScanQR_connectionError() {
-        String qrPath = "path_to_qr_with_connection_error.png";
+    void testGetVehicleIDByImg_EmptyImageName() {
+        // Pasamos un nombre de archivo vacío
+        String emptyImageName = "";
 
-        // Esperar que se lance una excepción ConnectException
-        assertThrows(ConnectException.class, () -> {
-            handler.scanQR(qrPath, "user123", "station456");
-        });
-    }
-
-    @Test
-    void testScanQR_validScenario() {
-        String qrPath = "path_to_valid_qr_image.png";
-
-        // Si todo es correcto, el emparejamiento debe completarse sin excepciones
-        assertDoesNotThrow(() -> {
-            handler.scanQR(qrPath, "user123", "station456");
-        });
+        // Verificamos que se lance la excepción CorruptedImgException
+        assertThrows(CorruptedImgException.class, () -> {
+            qrDecoder.getVehicleIDByImg(emptyImageName);
+        }, "Se esperaba que se lanzara una excepción CorruptedImgException para nombre de archivo vacío.");
     }
 }

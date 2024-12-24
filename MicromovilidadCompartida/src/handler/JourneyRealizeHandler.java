@@ -7,6 +7,7 @@ import micromobility.*;
 import domain.*;
 import data.*;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.math.BigDecimal;
 import java.awt.image.BufferedImage;
@@ -27,8 +28,9 @@ public class JourneyRealizeHandler {
         this.btSignal = btSignal;
         this.pmVehicle = pmVehicle;
         this.journeyService = journeyService;
-        this.qrDecoder = this.qrDecoder;
+        this.qrDecoder = qrDecoder; // Cambiado para evitar `null`
     }
+
 
     public String broadcastStationID(String statID) throws ConnectException {
         if (statID == null || statID.isEmpty()) {
@@ -39,48 +41,24 @@ public class JourneyRealizeHandler {
     }
 
 
-    public void scanQR(String imagePath) throws ConnectException, InvalidPairingArgsException, PMVNotAvailException, CorruptedImgException {
-        if (imagePath == null || imagePath.trim().isEmpty()) {
-            throw new InvalidPairingArgsException("Datos del QR inválidos.");
+    public void scanQR(String imageName) throws ConnectException, InvalidPairingArgsException, PMVNotAvailException, CorruptedImgException {
+        if (imageName == null || imageName.trim().isEmpty()) {
+            throw new InvalidPairingArgsException("El nombre del archivo no puede ser nulo o vacío.");
         }
 
         try {
-            // Generar el VehicleID utilizando el hashCode del qrData
-            BufferedImage qrImage = loadImageFromPath(imagePath);
-            VehicleID vehID = qrDecoder.getVehicleID(qrImage);
+            // Usar el nombre del archivo para obtener el ID del vehículo
+            VehicleID vehID = qrDecoder.getVehicleIDByImg(imageName);
 
-            // Verificar la disponibilidad del vehículo
+            // Verificar disponibilidad del vehículo
             server.checkPMVAvail(vehID);
 
-            // Crear una nueva instancia de JourneyService
-            journeyService = new JourneyService();
-            journeyService.setServiceInit(LocalDateTime.now());
-
-            // Actualizar valores en JourneyService
-            //journeyService.setOriginPoint(currentLocation); // Se debe obtener la ubicación actual
-            //journeyService.setOriginStationID(originStationID); // Identificar la estación de origen
-
-            // Establecer conexión Bluetooth
-            pmVehicle.setNotAvailb(); // Cambiar el estado del vehículo a NotAvailable
-            System.out.println("Vehículo vinculado y listo para iniciar desplazamiento.");
-        } catch (PMVNotAvailException e) {
-            throw new PMVNotAvailException("El vehículo no está disponible.");
-        } catch (ConnectException e) {
-            throw new ConnectException("Error de conexión con el servidor o Bluetooth.");
-        } catch (CorruptedImgException e) {
-            throw e;  // Aquí es donde modificamos para lanzar directamente la excepción CorruptedImgException
+            // Completar flujo
+            System.out.println("Emparejamiento completado con el vehículo: " + vehID.getVehicleId());
+        } catch (PMVNotAvailException | CorruptedImgException | ConnectException e) {
+            throw e;
         }
     }
-
-    // Método para cargar la imagen
-    private BufferedImage loadImageFromPath(String imagePath) throws CorruptedImgException {
-        try {
-            return ImageIO.read(new File(imagePath));
-        } catch (Exception e) {
-            throw new CorruptedImgException("No se pudo cargar la imagen desde la ruta: " + imagePath);
-        }
-    }
-
     public void startDriving() throws ConnectException {
         pmVehicle.setUnderWay(); // Cambiar el estado del vehículo
         journeyService.setServiceInit(LocalDateTime.now()); // Iniciar el trayecto

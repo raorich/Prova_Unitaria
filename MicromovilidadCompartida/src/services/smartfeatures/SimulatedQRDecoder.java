@@ -1,31 +1,27 @@
 package services.smartfeatures;
 
-import java.awt.image.BufferedImage;
-import exceptions.CorruptedImgException;
 import data.VehicleID;
-import java.io.File;
+import exceptions.CorruptedImgException;
 
+import java.awt.image.BufferedImage;
 
 public class SimulatedQRDecoder implements QRDecoder {
-
-    @Override
     public VehicleID getVehicleID(BufferedImage QRImg) throws CorruptedImgException {
-        // Simulamos la decodificación del QR en función del nombre del archivo
-
-        // Si la imagen es "qr_vehicle1.png", devolvemos el VehicleID con ID "V123"
-        // Extraemos el nombre del archivo de la ruta
-        String fileName = new File("qr_vehicle1.png").getName();
-
-        if (fileName.equals("qr_vehicle1.png")) {
-            return new VehicleID("V123");  // ID válido
+        if (QRImg == null) {
+            throw new CorruptedImgException("Imagen QR nula o corrupta");
         }
+        // Simulamos que el código QR "qr_vehicle1.png" corresponde al vehículo con ID "V123"
+        return new VehicleID("V123");
+    }
 
-        // Si la imagen es "qr_invalid.png", lanzamos la excepción
-        if (fileName.equals("qr_invalid.png")) {
-            throw new CorruptedImgException("Imagen QR no válida.");
+    public VehicleID getVehicleIDByImg(String imageName) throws CorruptedImgException {
+        if (imageName == null || imageName.trim().isEmpty()) {
+            throw new CorruptedImgException("Nombre de archivo nulo o vacío");
         }
-
-        // Si la imagen no corresponde a ningún caso, lanzamos una excepción de imagen corrupta
-        throw new CorruptedImgException("Imagen QR no válida.");
+        // Simulamos que "qr_vehicle1.png" corresponde a "V123", y otros códigos no los reconoce
+        if (imageName.equals("qr_vehicle1.png")) {
+            return new VehicleID("V123");
+        }
+        throw new CorruptedImgException("Código QR no reconocido");
     }
 }

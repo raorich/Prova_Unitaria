@@ -10,7 +10,7 @@ public final class ServiceID {
         if (!serviceId.matches("[a-zA-Z0-9]{3,10}")) {
             throw new IllegalArgumentException("VehicleID must be alphanumeric and 3-10 characters long");
         }
-        this.vehicleId = vehicleId;
+        this.serviceId = serviceId;
     }
 
     public String getServiceId() {
