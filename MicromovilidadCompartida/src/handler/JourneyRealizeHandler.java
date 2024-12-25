@@ -22,20 +22,20 @@
             private PMVehicle pmVehicle;
             private JourneyService journeyService;
             private QRDecoder qrDecoder;
-            private AppWallet appWallet;
+            private Wallet wallet;
 
             // Crear objetos previamente
             private UserAccount user = new UserAccount("user123"); // ID de cuenta de usuario
             private StationID station = new StationID("station001");  // ID de estación
             private GeographicPoint location = new GeographicPoint(40.7128f, -74.0060f); // Coordenadas de ubicación
 
-            public JourneyRealizeHandler(Server server, UnbondedBTSignal btSignal, PMVehicle pmVehicle, JourneyService journeyService, QRDecoder qrDecoder, AppWallet appWallet) {
+            public JourneyRealizeHandler(Server server, UnbondedBTSignal btSignal, PMVehicle pmVehicle, JourneyService journeyService, QRDecoder qrDecoder, Wallet wallet) {
                 this.server = server;
                 this.btSignal = btSignal;
                 this.pmVehicle = pmVehicle;
                 this.journeyService = journeyService;
                 this.qrDecoder = qrDecoder; // Cambiado para evitar `null`
-                this.appWallet = appWallet;
+                this.wallet = wallet;
             }
 
 
@@ -129,11 +129,11 @@
 
             // Operación interna para realizar el pago desde el monedero de la app
             private void realizePayment(BigDecimal imp) throws NotEnoughWalletException {
-                if (appWallet.getBalance().compareTo(imp) < 0) {
+                if (wallet.getBalance().compareTo(imp) < 0) {
                     throw new NotEnoughWalletException("Saldo insuficiente en el monedero.");
                 }
 
                 // Deduce el importe del saldo del monedero
-                appWallet.deduct(imp);
+                wallet.deduct(imp);
                 System.out.println("Pago realizado con éxito. Importe: " + imp);
             }
