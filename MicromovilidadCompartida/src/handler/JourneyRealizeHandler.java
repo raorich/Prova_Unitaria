@@ -22,18 +22,20 @@
             private PMVehicle pmVehicle;
             private JourneyService journeyService;
             private QRDecoder qrDecoder;
+            private AppWallet appWallet;
 
             // Crear objetos previamente
             private UserAccount user = new UserAccount("user123"); // ID de cuenta de usuario
             private StationID station = new StationID("station001");  // ID de estación
             private GeographicPoint location = new GeographicPoint(40.7128f, -74.0060f); // Coordenadas de ubicación
 
-            public JourneyRealizeHandler(Server server, UnbondedBTSignal btSignal, PMVehicle pmVehicle, JourneyService journeyService, QRDecoder qrDecoder) {
+            public JourneyRealizeHandler(Server server, UnbondedBTSignal btSignal, PMVehicle pmVehicle, JourneyService journeyService, QRDecoder qrDecoder, AppWallet appWallet) {
                 this.server = server;
                 this.btSignal = btSignal;
                 this.pmVehicle = pmVehicle;
                 this.journeyService = journeyService;
                 this.qrDecoder = qrDecoder; // Cambiado para evitar `null`
+                this.appWallet = appWallet;
             }
 
 
@@ -106,3 +108,32 @@
                 System.out.println("Calculando el importe...");
             }
         }
+        // Evento de entrada para seleccionar método de pago
+            public void selectPaymentMethod(char opt) throws ProceduralException, NotEnoughWalletException, ConnectException {
+                if (opt != 'C' && opt != 'D' && opt != 'W' && opt != 'B') { // Ejemplo: 'C'= Crédito, 'D'= Débito, 'W'= Monedero, 'B'= Billetera digital
+                    throw new ProceduralException("Método de pago no válido.");
+                }
+
+                System.out.println("Método de pago seleccionado: " + opt);
+
+                // Obtener el importe a pagar desde el JourneyService (simulación)
+                BigDecimal amountToPay = journeyService.getImport(); // Supongamos que este método devuelve el importe del trayecto
+
+                if (opt == 'W') { // Monedero en la app
+                    realizePayment(amountToPay);
+                } else {
+                    // Lógica de conexión con otros servicios de pago, si corresponde
+                    System.out.println("Procesando pago con método externo...");
+                }
+            }
+
+            // Operación interna para realizar el pago desde el monedero de la app
+            private void realizePayment(BigDecimal imp) throws NotEnoughWalletException {
+                if (appWallet.getBalance().compareTo(imp) < 0) {
+                    throw new NotEnoughWalletException("Saldo insuficiente en el monedero.");
+                }
+
+                // Deduce el importe del saldo del monedero
+                appWallet.deduct(imp);
+                System.out.println("Pago realizado con éxito. Importe: " + imp);
+            }
