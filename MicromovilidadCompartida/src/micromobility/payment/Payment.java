@@ -1,10 +1,11 @@
 package micromobility;
-package payment;
-import data.*;
-import domain.UserAcc;
-import services.JourneyService;
-import exceptions.*;
 
+
+import domain.JourneyService;
+import exceptions.ConnectException;
+import exceptions.NotEnoughWalletException;
+import exceptions.ProceduralException;
+import data.UserAccount;
 import java.math.BigDecimal;
 
 public class Payment {

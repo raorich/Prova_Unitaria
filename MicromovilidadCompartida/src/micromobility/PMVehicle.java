@@ -1,15 +1,19 @@
 package micromobility;
 import data.*;
+import exceptions.ProceduralException;
 
 public class PMVehicle {
     public enum PMVState {
         Available, NotAvailable, UnderWay, TemporaryParking
     }
+
     private PMVState state;
     private GeographicPoint location;
+    private VehicleID vehicleID;  // Campo para almacenar el VehicleID
 
-    public PMVehicle() {
+    public PMVehicle(VehicleID vehicleID) {
         this.state = PMVState.Available; // Estado inicial
+        this.vehicleID = vehicleID;  // Inicializamos el VehicleID
     }
 
     public PMVState getState() {
@@ -20,20 +24,34 @@ public class PMVehicle {
         return location;
     }
 
-    public void setNotAvailb() {
+    public void setLocation(GeographicPoint gP) {
+        this.location = gP;
+    }
+
+    public void setNotAvailb() throws ProceduralException {
+        if (state == PMVState.UnderWay) {
+            throw new ProceduralException("No se puede marcar el vehículo como no disponible mientras está en uso.");
+        }
         this.state = PMVState.NotAvailable;
     }
 
-    public void setUnderWay() {
+    public void setUnderWay() throws ProceduralException {
+        if (state == PMVState.NotAvailable) {
+            throw new ProceduralException("El vehículo no está disponible para ser usado.");
+        }
         this.state = PMVState.UnderWay;
     }
 
-    public void setAvailb() {
+    public void setAvailb() throws ProceduralException {
+        if (state == PMVState.UnderWay) {
+            throw new ProceduralException("No se puede marcar el vehículo como disponible mientras está en uso.");
+        }
         this.state = PMVState.Available;
     }
 
-    public void setLocation(GeographicPoint gP) {
-        this.location = gP;
+    // Nuevo método para obtener el VehicleID
+    public VehicleID getVehicleID() {
+        return vehicleID;
     }
 }
 
