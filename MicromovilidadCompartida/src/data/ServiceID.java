@@ -1,14 +1,22 @@
 package data;
 
+import java.util.UUID;
+
 public final class ServiceID {
     private final String serviceId;
 
+    // Constructor que genera un UUID único
+    public ServiceID() {
+        this.serviceId = UUID.randomUUID().toString();  // Asignar un UUID único como identificador
+    }
+
+    // Si deseas que el ServiceID pueda recibir un valor como parámetro:
     public ServiceID(String serviceId) {
         if (serviceId == null || serviceId.trim().isEmpty()) {
             throw new IllegalArgumentException("ServiceID cannot be null or empty");
         }
-        if (!serviceId.matches("[a-zA-Z0-9]{3,10}")) {
-            throw new IllegalArgumentException("VehicleID must be alphanumeric and 3-10 characters long");
+        if (!serviceId.matches("[a-zA-Z0-9]{3,36}")) {
+            throw new IllegalArgumentException("ServiceID must be alphanumeric and 3-36 characters long");
         }
         this.serviceId = serviceId;
     }

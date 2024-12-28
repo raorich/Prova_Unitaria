@@ -22,6 +22,9 @@ class VehicleIDTest {
     void testValidVehicleID() {
         VehicleID id = new VehicleID("V123");
         assertEquals("V123", id.getVehicleId());
+
+        id = new VehicleID("V123456789");
+        assertEquals("V123456789", id.getVehicleId());
     }
 
     @Test

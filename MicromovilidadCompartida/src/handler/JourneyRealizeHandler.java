@@ -1,19 +1,15 @@
         package handler;
 
         import exceptions.*;
-        import micromobility.Wallet;
+        import micromobility.payment.Wallet;
         import services.*;
         import services.smartfeatures.*;
         import micromobility.*;
         import domain.*;
         import data.*;
 
-        import java.io.IOException;
         import java.time.LocalDateTime;
         import java.math.BigDecimal;
-        import java.awt.image.BufferedImage;
-        import javax.imageio.ImageIO;
-        import java.io.File;
 
 
         public class JourneyRealizeHandler {
@@ -80,7 +76,7 @@
                 pmVehicle.setNotAvailb();
 
                 // Configuración del trayecto
-                journeyService = new JourneyService();
+                //journeyService = new JourneyService();
                 LocalDateTime currentDateTime = LocalDateTime.now();
                 journeyService.setServiceInit(currentDateTime); // Iniciar el trayecto con la hora actual
                 journeyService.setOriginPoint(location); // Establecer la ubicación del conductor
@@ -98,6 +94,9 @@
             // Método para iniciar el trayecto (llamar al método de Arduino)
             public void startDriving() throws ConnectException, PMVPhisicalException, ProceduralException {
                 arduinoController.startDriving();
+                LocalDateTime currentDateTime = LocalDateTime.now();
+                journeyService.setServiceInit(currentDateTime);
+
             }
 
             public void stopDriving() throws ConnectException, ProceduralException, PMVPhisicalException {
@@ -155,39 +154,30 @@
 
                 // Procedemos al desemparejamiento
                 try {
+                    // Obtener el VehicleID para el desemparejamiento
+                    VehicleID vehicleID = pmVehicle.getVehicleID();
+
                     LocalDateTime currentDateTime = LocalDateTime.now();
                     GeographicPoint destination = pmVehicle.getLocation();
+                    pmVehicle.setLocation(destination);
+
+                    // Actualizar atributos del servicio de trayecto (JourneyService)
+                    journeyService.setEndPoint(destination);  // Establecer el punto final
+                    journeyService.setServiceFinish(currentDateTime);
 
                     // Calcular valores como la distancia, duración y velocidad media
                     calculateValues(destination, currentDateTime);
                     calculateImport(journeyService.getDistance(), journeyService.getDuration(), journeyService.getAvgSpeed(), currentDateTime);
 
-                    // Actualizar atributos del servicio de trayecto (JourneyService)
-                    journeyService.setEndPoint(destination);  // Establecer el punto final
-                    journeyService.setEndDate(currentDateTime.toLocalDate());  // Establecer la fecha de finalización
-                    journeyService.setEndHour(currentDateTime.toLocalTime());  // Establecer la hora de finalización
-
-                    // Actualizamos la duración, distancia y velocidad media
-                    journeyService.setDuration((int) journeyService.getDuration());
-                    journeyService.setDistance(journeyService.getDistance());
-                    journeyService.setAvgSpeed(journeyService.getAvgSpeed());
-
-                    // Obtener el VehicleID para el desemparejamiento
-                    VehicleID vehicleID = pmVehicle.getVehicleID();
-
                     // Llamamos al método para finalizar el emparejamiento
                     server.stopPairing(user, vehicleID, station, location, currentDateTime, journeyService.getAvgSpeed(), journeyService.getDistance(), journeyService.getDuration(), journeyService.getImportAmount());
                     server.unPairRegisterService(journeyService);
-
                     pmVehicle.setAvailb();
-                    journeyService.setInProgress(false);
-                    pmVehicle.setLocation(destination);
-
                     server.removeJourneyFromCache(journeyService);
+                    System.out.println("El desemparejamiento ha finalizado correctamente.");
 
-
-
-
+                    ServiceID newServiceID = new ServiceID();
+                    journeyService = new JourneyService(newServiceID, user, BigDecimal.ZERO, 'W');  // Crear el objeto JourneyService con el ServiceID
                 } catch (ConnectException | InvalidPairingArgsException | PairingNotFoundException e) {
                     // Capturamos las excepciones relacionadas con el emparejamiento y la conexión
                     throw e;
@@ -205,12 +195,15 @@
 
                 // Calcular la duración (en minutos)
                 long durationMinutes = java.time.Duration.between(startDateTime, endDateTime).toMinutes();
+                journeyService.setDuration((int) durationMinutes);
 
                 // Calcular la distancia entre el punto de origen y el punto final (en metros)
                 double distance = calculateDistance(startPoint, destination);
+                journeyService.setDistance((float) distance);
 
                 // Calcular la velocidad media (distancia / duración)
                 float avgSpeed = (float) (distance / durationMinutes);  // en metros/minuto
+                journeyService.setAvgSpeed(avgSpeed);
 
                 // Imprimir información para depuración (puedes eliminarlo en producción)
                 System.out.println("Duración: " + durationMinutes + " minutos.");
@@ -267,34 +260,39 @@
             }
 
 
+
             // Evento de entrada para seleccionar método de pago
             public void selectPaymentMethod(char opt) throws ProceduralException, NotEnoughWalletException, ConnectException {
-                if (opt != 'C' && opt != 'D' && opt != 'W' && opt != 'B') { // Ejemplo: 'C'= Crédito, 'D'= Débito, 'W'= Monedero, 'B'= Billetera digital
+                // Verificar si el método de pago es válido
+                if (opt != 'C' && opt != 'D' && opt != 'W' && opt != 'B') {
                     throw new ProceduralException("Método de pago no válido.");
                 }
-
+                // Si el método de pago es válido, imprimir el mensaje correspondiente
                 System.out.println("Método de pago seleccionado: " + opt);
-
-                // Obtener el importe a pagar desde el JourneyService (simulación)
-                //BigDecimal amountToPay = journeyService.getImport(); // Supongamos que este método devuelve el importe del trayecto
-
+                // Obtener el importe a pagar desde el JourneyService
+                BigDecimal amountToPay = journeyService.getImportAmount();
+                // Lógica para procesar el pago según el método seleccionado
                 if (opt == 'W') { // Monedero en la app
-                    //realizePayment(amountToPay);
-                } else {
+                    realizePayment(amountToPay);
+                    server.registerPayment(journeyService.getServiceID(),user,amountToPay,opt);
+                } else if (opt == 'C' || opt == 'D' || opt == 'B') { // Tarjeta, Débito o Bizum
                     // Lógica de conexión con otros servicios de pago, si corresponde
                     System.out.println("Procesando pago con método externo...");
+                } else {
+                    // Este bloque no debería ejecutarse, pero si llegamos aquí, lanzamos una excepción
+                    throw new ProceduralException("Método de pago no reconocido. No se pudo procesar el pago.");
                 }
             }
-        }
-
-            /*
             // Operación interna para realizar el pago desde el monedero de la app
-            private void realizePayment(BigDecimal imp) throws NotEnoughWalletException {
+            private void realizePayment(BigDecimal imp) throws NotEnoughWalletException, ConnectException {
                 if (wallet.getBalance().compareTo(imp) < 0) {
                     throw new NotEnoughWalletException("Saldo insuficiente en el monedero.");
                 }
 
                 // Deduce el importe del saldo del monedero
-                wallet.deduct(imp);
+                wallet.applyDeduction(imp);
                 System.out.println("Pago realizado con éxito. Importe: " + imp);
-            }*/
+                arduinoController.undoBTconnection();
+            }
+        }
+

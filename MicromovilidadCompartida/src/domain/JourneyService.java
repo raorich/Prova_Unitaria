@@ -1,52 +1,63 @@
 package domain;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.math.BigDecimal;
-import java.time.LocalTime;
-
 import data.*;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 public class JourneyService {
-    private LocalDateTime initDate;  // Fecha y hora de inicio
-    private LocalDateTime endDate;   // Fecha y hora de fin
-    private LocalDateTime endHour;   //
-    private boolean inProgress;      // Estado del trayecto (en progreso o no)
-    private float distance;          // Distancia recorrida en metros
-    private int duration;            // Duración del trayecto en minutos
-    private float avgSpeed;          // Velocidad promedio en km/h
-    private BigDecimal importAmount; // Importe a pagar por el servicio
+    private LocalDateTime initDate;   // Fecha y hora de inicio
+    private LocalDateTime endDate;    // Fecha y hora de fin
+    private boolean inProgress;       // Estado del trayecto (en progreso o no)
+    private float distance;           // Distancia recorrida en metros
+    private int duration;             // Duración del trayecto en minutos
+    private float avgSpeed;           // Velocidad promedio en km/h
+    private BigDecimal importAmount;  // Importe a pagar por el servicio
 
     // Nuevos atributos
-    private StationID orgStatID;    // Estación de origen
-    private GeographicPoint originPoint;  // Ubicación del conductor
-    private GeographicPoint endPoint;  // Ubicación del conductor
-    private UserAccount userAccount;     // Cuenta del usuario
-    private VehicleID vehicleID;    // ID del vehículo
+    private StationID orgStatID;      // Estación de origen
+    private GeographicPoint originPoint; // Ubicación inicial
+    private GeographicPoint endPoint;   // Ubicación final
+    private UserAccount userAccount;    // Cuenta del usuario
+    private VehicleID vehicleID;       // ID del vehículo
+    private ServiceID serviceID; // Nuevo atributo para el ServiceID
 
-    // Constructor
-    public JourneyService() {
-        this.inProgress = false;
+    // Constructor con parámetros
+    public JourneyService(ServiceID servID, UserAccount user, BigDecimal imp, char payMeth) {
+        // Llenamos los valores con los parámetros que recibimos
+        this.initDate = LocalDateTime.now();  // Se asume que el trayecto inicia al crear el objeto
+        this.inProgress = true;               // El trayecto comienza en progreso
+        this.importAmount = imp;
+        this.userAccount = user;
+        this.serviceID = serviceID; // Asignamos el ServiceID
+        // Asumimos que el resto de los atributos podrían ser establecidos en otro momento
     }
 
-    // Setters y Getters
-
-    // Inicialización del trayecto
+    // Métodos para inicialización y finalización del servicio
     public void setServiceInit(LocalDateTime initDate) {
+        if (initDate == null) throw new IllegalArgumentException("La fecha de inicio no puede ser nula.");
         this.initDate = initDate;
-        this.inProgress = true;  // Marcar trayecto como en progreso
+        this.inProgress = true;
+    }
+
+    public void setServiceFinish(LocalDateTime endDate) {
+        if (endDate == null || endDate.isBefore(this.initDate)) {
+            throw new IllegalArgumentException("La fecha de fin no puede ser anterior a la fecha de inicio.");
+        }
+        this.endDate = endDate;
+        this.inProgress = false;
     }
 
     public LocalDateTime getServiceInit() {
         return this.initDate;
     }
 
-    public LocalDateTime getEndDate() {
-        return endDate;
+    public LocalDateTime getServiceFinish() {
+        return this.endDate;
     }
 
-    // Métodos para distancia, duración, velocidad promedio e importe
+    // Métodos para distancia, duración y velocidad promedio
     public void setDistance(float distance) {
+        if (distance < 0) throw new IllegalArgumentException("La distancia no puede ser negativa.");
         this.distance = distance;
     }
 
@@ -55,6 +66,7 @@ public class JourneyService {
     }
 
     public void setDuration(int duration) {
+        if (duration < 0) throw new IllegalArgumentException("La duración no puede ser negativa.");
         this.duration = duration;
     }
 
@@ -63,6 +75,7 @@ public class JourneyService {
     }
 
     public void setAvgSpeed(float avgSpeed) {
+        if (avgSpeed < 0) throw new IllegalArgumentException("La velocidad promedio no puede ser negativa.");
         this.avgSpeed = avgSpeed;
     }
 
@@ -71,6 +84,9 @@ public class JourneyService {
     }
 
     public void setImportAmount(BigDecimal importAmount) {
+        if (importAmount.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("El importe no puede ser negativo.");
+        }
         this.importAmount = importAmount;
     }
 
@@ -78,7 +94,7 @@ public class JourneyService {
         return importAmount;
     }
 
-    // Métodos para los atributos adicionales
+    // Métodos para otros atributos
     public void setOrgStatID(StationID orgStatID) {
         this.orgStatID = orgStatID;
     }
@@ -93,6 +109,14 @@ public class JourneyService {
 
     public GeographicPoint getOriginPoint() {
         return originPoint;
+    }
+
+    public void setEndPoint(GeographicPoint endPoint) {
+        this.endPoint = endPoint;
+    }
+
+    public GeographicPoint getEndPoint() {
+        return endPoint;
     }
 
     public void setUserAccount(UserAccount userAccount) {
@@ -119,16 +143,11 @@ public class JourneyService {
         return inProgress;
     }
 
-
-    public void setEndPoint(GeographicPoint destination) {
-        this.endPoint=endPoint;
+    public void setServiceID(ServiceID serviceID) {
+        this.serviceID = serviceID;
     }
 
-    public void setEndDate(LocalDate toLocalDate) {
-        this.endDate= toLocalDate.atStartOfDay();
-    }
-
-    public void setEndHour(LocalTime toLocalTime) {
-        this.endHour= LocalDateTime.from(toLocalTime);
+    public ServiceID getServiceID() {
+        return this.serviceID;
     }
 }

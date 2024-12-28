@@ -1,9 +1,6 @@
 package domain;
 
-import data.GeographicPoint;
-import data.StationID;
-import data.UserAccount;
-import data.VehicleID;
+import data.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -15,81 +12,146 @@ import static org.junit.jupiter.api.Assertions.*;
 class JourneyServiceTest {
 
     private JourneyService journeyService;
+    private ServiceID serviceID;
     private UserAccount userAccount;
     private VehicleID vehicleID;
+    private GeographicPoint originPoint;
+    private GeographicPoint endPoint;
     private StationID stationID;
-    private GeographicPoint location;
+    private BigDecimal importAmount;
 
     @BeforeEach
     void setUp() {
-        // Crear los objetos necesarios antes de cada prueba
-        journeyService = new JourneyService();
+        // Inicializamos los objetos necesarios para la prueba
+        ServiceID serviceID = new ServiceID("S1234");
         userAccount = new UserAccount("user123");
-        vehicleID = new VehicleID("veh123");
-        stationID = new StationID("station001");
-        location = new GeographicPoint(40.7128f, -74.0060f); // Coordenadas de Nueva York
+        vehicleID = new VehicleID("V1234");
+        originPoint = new GeographicPoint(40, -74);  // Nueva York
+        endPoint = new GeographicPoint(34, -118);    // Los Ángeles
+        stationID = new StationID("ST123");
+        importAmount = new BigDecimal("15.00");
+
+        journeyService = new JourneyService(serviceID, userAccount, importAmount, 'C');
     }
 
     @Test
-    void testSetServiceInit() {
-        // Inicializar el trayecto
-        LocalDateTime initTime = LocalDateTime.now();
-        journeyService.setServiceInit(initTime);
-
-        // Verificar que el trayecto se haya iniciado correctamente
-        assertTrue(journeyService.isInProgress(), "El trayecto debería estar en progreso.");
-        assertEquals(initTime, journeyService.getInitDate(), "La fecha de inicio no es correcta.");
+    void testConstructor_Success() {
+        assertNotNull(journeyService);
+        assertEquals(serviceID, journeyService.getServiceID());
+        assertEquals(userAccount, journeyService.getUserAccount());
+        assertEquals(importAmount, journeyService.getImportAmount());
+        assertTrue(journeyService.isInProgress());  // El viaje debe estar en progreso por defecto
     }
 
     @Test
-    void testSetServiceFinish() {
-        // Finalizar el trayecto
-        LocalDateTime endTime = LocalDateTime.now();
-        journeyService.setServiceInit(LocalDateTime.now()); // Inicializar primero
-        journeyService.setServiceFinish(endTime, 15.0f, 10, 30.0f, new BigDecimal("10.00"));
+    void testSetServiceInit_Success() {
+        LocalDateTime now = LocalDateTime.now();
+        journeyService.setServiceInit(now);
+        assertEquals(now, journeyService.getServiceInit());
+    }
 
-        // Verificar que el trayecto se haya finalizado correctamente
-        assertFalse(journeyService.isInProgress(), "El trayecto debería haber terminado.");
-        assertEquals(endTime, journeyService.getEndDate(), "La fecha de fin no es correcta.");
-        assertEquals(15.0f, journeyService.getDistance(), "La distancia no es correcta.");
-        assertEquals(10, journeyService.getDuration(), "La duración no es correcta.");
-        assertEquals(30.0f, journeyService.getAvgSpeed(), "La velocidad promedio no es correcta.");
-        assertEquals(new BigDecimal("10.00"), journeyService.getImportAmount(), "El importe no es correcto.");
+    @Test
+    void testSetServiceInit_Failure_NullDate() {
+        assertThrows(IllegalArgumentException.class, () -> journeyService.setServiceInit(null));
+    }
+
+    @Test
+    void testSetServiceFinish_Success() {
+        LocalDateTime now = LocalDateTime.now();
+        journeyService.setServiceFinish(now.plusHours(1));
+        assertEquals(now.plusHours(1), journeyService.getServiceFinish());
+        assertFalse(journeyService.isInProgress());  // El trayecto debe haberse marcado como no en progreso
+    }
+
+    @Test
+    void testSetServiceFinish_Failure_InvalidDate() {
+        // Configurar el entorno
+        LocalDateTime now = LocalDateTime.now();
+        journeyService.setServiceInit(now);  // Establecer la fecha de inicio
+
+        // Verificar que la fecha de inicio está correctamente configurada
+        assertEquals(now, journeyService.getServiceInit());
+
+        // Intentar establecer la fecha de fin con una fecha anterior a la de inicio
+        LocalDateTime invalidFinishDate = now.minusHours(1);
+
+        // Verificar que se lanza la excepción IllegalArgumentException
+        assertThrows(IllegalArgumentException.class, () -> journeyService.setServiceFinish(invalidFinishDate));
+    }
+
+    @Test
+    void testSetDistance_Success() {
+        journeyService.setDistance(1000.0f);  // 1 km
+        assertEquals(1000.0f, journeyService.getDistance());
+    }
+
+    @Test
+    void testSetDistance_Failure_NegativeValue() {
+        assertThrows(IllegalArgumentException.class, () -> journeyService.setDistance(-1.0f));
+    }
+
+    @Test
+    void testSetDuration_Success() {
+        journeyService.setDuration(30);  // 30 minutos
+        assertEquals(30, journeyService.getDuration());
+    }
+
+    @Test
+    void testSetDuration_Failure_NegativeValue() {
+        assertThrows(IllegalArgumentException.class, () -> journeyService.setDuration(-1));
+    }
+
+    @Test
+    void testSetAvgSpeed_Success() {
+        journeyService.setAvgSpeed(25.5f);  // 25.5 km/h
+        assertEquals(25.5f, journeyService.getAvgSpeed());
+    }
+
+    @Test
+    void testSetAvgSpeed_Failure_NegativeValue() {
+        assertThrows(IllegalArgumentException.class, () -> journeyService.setAvgSpeed(-5.0f));
+    }
+
+    @Test
+    void testSetImportAmount_Success() {
+        BigDecimal newAmount = new BigDecimal("20.00");
+        journeyService.setImportAmount(newAmount);
+        assertEquals(newAmount, journeyService.getImportAmount());
+    }
+
+    @Test
+    void testSetImportAmount_Failure_NegativeValue() {
+        BigDecimal negativeAmount = new BigDecimal("-5.00");
+        assertThrows(IllegalArgumentException.class, () -> journeyService.setImportAmount(negativeAmount));
     }
 
     @Test
     void testSetOrgStatID() {
-        // Establecer la estación de origen
         journeyService.setOrgStatID(stationID);
-
-        // Verificar que el ID de la estación se ha establecido correctamente
-        assertEquals(stationID, journeyService.getOrgStatID(), "El ID de la estación de origen no es correcto.");
+        assertEquals(stationID, journeyService.getOrgStatID());
     }
 
     @Test
     void testSetOriginPoint() {
-        // Establecer la ubicación del conductor
-        journeyService.setOriginPoint(location);
+        journeyService.setOriginPoint(originPoint);
+        assertEquals(originPoint, journeyService.getOriginPoint());
+    }
 
-        // Verificar que la ubicación se ha establecido correctamente
-        assertEquals(location, journeyService.getOriginPoint(), "La ubicación del conductor no es correcta.");
+    @Test
+    void testSetEndPoint() {
+        journeyService.setEndPoint(endPoint);
+        assertEquals(endPoint, journeyService.getEndPoint());
     }
 
     @Test
     void testSetUserAccount() {
-        // Establecer la cuenta de usuario
         journeyService.setUserAccount(userAccount);
-
-        // Verificar que la cuenta de usuario se ha establecido correctamente
-        assertEquals(userAccount, journeyService.getUserAccount(), "La cuenta de usuario no es correcta.");
+        assertEquals(userAccount, journeyService.getUserAccount());
     }
 
     @Test
     void testSetVehicleID() {
-        // Establecer el ID del vehículo
         journeyService.setVehicleID(vehicleID);
-
-        // Verificar que el ID del vehículo se ha establecido correctamente
-        assertEquals(vehicleID, journeyService.getVehicleID(), "El ID del vehículo no es correcto.");
+        assertEquals(vehicleID, journeyService.getVehicleID());
     }
 }

@@ -97,10 +97,34 @@ public class ServerSimulated implements Server {
     public void registerLocation(VehicleID veh, StationID st) {
         System.out.println("Ubicación del vehículo registrada en el servidor.");
     }
-
+    // Simulación de la conexión al servidor
+    private boolean isConnected() {
+        return Math.random() > 0.2; // Simulamos un 80% de éxito en la conexión
+    }
     @Override
     public void registerPayment(ServiceID servID, UserAccount user, BigDecimal imp, char payMeth) throws ConnectException {
-        System.out.println("Pago registrado en el servidor.");
+        // Verificamos la conexión
+        if (!isConnected()) {
+            throw new ConnectException("Unable to connect to the server.");
+        }
+
+        // Verificamos que el importe sea válido (positivo)
+        if (imp == null || imp.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("The payment amount must be positive.");
+        }
+
+        // Imprimir el detalle del pago registrado (simulando el registro)
+        System.out.println("Pago registrado en el servidor:");
+        System.out.println("ServiceID: " + servID.getServiceId());
+        System.out.println("Usuario: " + user.getAccountId());
+        System.out.println("Importe: " + imp);
+        System.out.println("Método de pago: " + (payMeth == 'W' ? "Monedero" : "Otro método"));
+
+        // Aquí agregamos el servicio al caché de pruebas (como ejemplo)
+        JourneyService journeyService = new JourneyService(servID, user, imp, payMeth);
+        journeyCache.add(journeyService);
+
+        System.out.println("Pago registrado correctamente.");
     }
 
     // Método para eliminar el JourneyService del caché

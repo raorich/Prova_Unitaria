@@ -22,6 +22,9 @@ class UserAccountTest {
     void testValidUserAccount() {
         UserAccount account = new UserAccount("user123");
         assertEquals("user123", account.getAccountId());
+
+        account = new UserAccount("abc12345678901234567");
+        assertEquals("abc12345678901234567", account.getAccountId());
     }
 
     @Test
@@ -41,11 +44,17 @@ class UserAccountTest {
     void testEqualsAndHashCode() {
         assertEquals(validAccount1, validAccount2);
         assertEquals(validAccount1.hashCode(), validAccount2.hashCode());
+
+        assertNotEquals(validAccount1, differentAccount);
+        assertNotEquals(validAccount1.hashCode(), differentAccount.hashCode());
     }
 
     @Test
     void testToString() {
         assertEquals("UserAccount{accountId='user123'}", validAccount1.toString());
+
+        UserAccount account = new UserAccount("user999");
+        assertEquals("UserAccount{accountId='user999'}", account.toString());
     }
 
     @Test
