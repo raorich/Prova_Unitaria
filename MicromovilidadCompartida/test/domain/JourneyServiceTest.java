@@ -58,11 +58,11 @@ class JourneyServiceTest {
     @Test
     void testSetServiceFinish_Success() {
         LocalDateTime now = LocalDateTime.now();
-        journeyService.setServiceFinish(now.plusHours(1));
-        assertEquals(now.plusHours(1), journeyService.getServiceFinish());
-        assertFalse(journeyService.isInProgress());  // El trayecto debe haberse marcado como no en progreso
+        journeyService.setServiceInit(now);
+        journeyService.setServiceFinish(now.plusMinutes(30));
+        assertEquals(now.plusMinutes(30), journeyService.getServiceFinish());
+        assertFalse(journeyService.isInProgress());
     }
-
     @Test
     void testSetServiceFinish_Failure_InvalidDate() {
         // Configurar el entorno
@@ -153,5 +153,19 @@ class JourneyServiceTest {
     void testSetVehicleID() {
         journeyService.setVehicleID(vehicleID);
         assertEquals(vehicleID, journeyService.getVehicleID());
+    }
+    @Test
+    void testSetInProgress() {
+        journeyService.setInProgress(false);
+        assertFalse(journeyService.isInProgress());
+
+        journeyService.setInProgress(true);
+        assertTrue(journeyService.isInProgress());
+    }
+    @Test
+    void testInvalidValuesForDistanceDurationSpeed() {
+        assertThrows(IllegalArgumentException.class, () -> journeyService.setDistance(-10.0f));
+        assertThrows(IllegalArgumentException.class, () -> journeyService.setDuration(-5));
+        assertThrows(IllegalArgumentException.class, () -> journeyService.setAvgSpeed(-2.0f));
     }
 }

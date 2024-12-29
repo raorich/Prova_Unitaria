@@ -45,13 +45,13 @@ public class SimulatedArduinoMicroController implements ArduinoMicroController {
         if (!btConnected) {
             throw new ConnectException("La conexión Bluetooth no está establecida.");
         }
-
-        if (!vehicleAvailable) {
-            throw new PMVPhisicalException("El vehículo no está disponible para conducir.");
-        }
-
         if (pmVehicle.getState() != PMVehicle.PMVState.NotAvailable) {
             throw new ProceduralException("El vehículo no está en el estado correcto para iniciar el trayecto. Debe estar 'NotAvailable'.");
+        }
+        // Simulamos un 5% de probabilidad de que haya un problema técnico en el vehículo
+        double random = Math.random();
+        if (random < 0.05) {  // 5% de probabilidad
+            throw new PMVPhisicalException("Error técnico en el vehículo, no puede iniciar el trayecto.");
         }
 
         // Cambiar el estado del vehículo a 'UnderWay' (en marcha)

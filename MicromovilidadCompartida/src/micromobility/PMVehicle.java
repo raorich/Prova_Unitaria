@@ -36,8 +36,8 @@ public class PMVehicle {
     }
 
     public void setUnderWay() throws ProceduralException {
-        if (state == PMVState.NotAvailable) {
-            throw new ProceduralException("El vehículo no está disponible para ser usado.");
+        if (state == PMVState.Available) {
+            throw new ProceduralException("El vehículo no está no esta emparejado.");
         }
         this.state = PMVState.UnderWay;
     }
