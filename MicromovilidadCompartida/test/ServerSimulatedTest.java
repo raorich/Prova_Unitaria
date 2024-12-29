@@ -1,11 +1,10 @@
-package services;
-
 import data.*;
 import domain.JourneyService;
 import exceptions.*;
 import exceptions.PairingNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import services.ServerSimulated;
 import services.smartfeatures.QRDecoder;
 
 import java.math.BigDecimal;
@@ -79,7 +78,7 @@ class ServerSimulatedTest {
 
     @Test
     void testSetDistance_Success() {
-        float validDistance = 5000.0f; // 5 km
+        float validDistance = 5000.0f;
         assertDoesNotThrow(() -> journeyService.setDistance(validDistance));
         assertEquals(validDistance, journeyService.getDistance());
     }
@@ -94,7 +93,7 @@ class ServerSimulatedTest {
 
     @Test
     void testSetDuration_Success() {
-        int validDuration = 30; // 30 minutes
+        int validDuration = 30;
         assertDoesNotThrow(() -> journeyService.setDuration(validDuration));
         assertEquals(validDuration, journeyService.getDuration());
     }
@@ -109,7 +108,7 @@ class ServerSimulatedTest {
 
     @Test
     void testSetAvgSpeed_Success() {
-        float validAvgSpeed = 20.5f; // 20.5 km/h
+        float validAvgSpeed = 20.5f;
         assertDoesNotThrow(() -> journeyService.setAvgSpeed(validAvgSpeed));
         assertEquals(validAvgSpeed, journeyService.getAvgSpeed());
     }

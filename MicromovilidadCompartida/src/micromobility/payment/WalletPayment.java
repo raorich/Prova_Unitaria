@@ -11,10 +11,13 @@ public class WalletPayment extends Payment {
 
     public WalletPayment(JourneyService journeyService, UserAccount user, BigDecimal amount, Wallet wallet) {
         super(journeyService, user, amount);
+        if (wallet == null) {
+            throw new IllegalArgumentException("El monedero no puede ser nulo.");
+        }
         this.wallet = wallet;
     }
 
-    @Override
+
     public void processPayment() throws NotEnoughWalletException {
         // Verificamos si el monedero tiene suficiente saldo
         if (wallet.getBalance().compareTo(amount) < 0) {

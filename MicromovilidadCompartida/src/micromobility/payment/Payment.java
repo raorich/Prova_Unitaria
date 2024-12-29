@@ -6,7 +6,7 @@ import exceptions.NotEnoughWalletException;
 
 import java.math.BigDecimal;
 
-public abstract class Payment {
+public class Payment {
 
     protected JourneyService journeyService; // Asociación con el servicio
     protected UserAccount user; // Asociación con el usuario
@@ -21,11 +21,20 @@ public abstract class Payment {
         this.amount = amount;
     }
 
-    public abstract void processPayment() throws NotEnoughWalletException;
+    public JourneyService getJourneyService() {
+        return journeyService;
+    }
+    public UserAccount getUser() {
+        return user;
+    }
+
+    public BigDecimal getAmount() {
+        return amount;
+    }
 
     @Override
     public String toString() {
-        return "Payment{" +
+        return getClass().getSimpleName() + "{" +
                 "journeyService=" + journeyService +
                 ", user=" + user +
                 ", amount=" + amount +

@@ -1,5 +1,3 @@
-package services.smartfeatures;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 import data.*;
@@ -51,8 +49,7 @@ class SimulatedArduinoMicroControllerTest {
 
     @Test
     void testSetBTconnection_Success() {
-        assertDoesNotThrow(() -> controller.setBTconnection(),
-                "La conexión Bluetooth debe establecerse correctamente.");
+        assertDoesNotThrow(() -> controller.setBTconnection());//Bluetooth debe establecerse correctamente
     }
 
     @Test
@@ -60,22 +57,17 @@ class SimulatedArduinoMicroControllerTest {
         controller = new SimulatedArduinoMicroController(
                 false, true, pmVehicle, journeyService, stationID, location, userAccount);
 
-        assertThrows(ConnectException.class, () -> controller.setBTconnection(),
-                "Se esperaba una ConnectException al intentar conectar Bluetooth.");
+        assertThrows(ConnectException.class, () -> controller.setBTconnection());//ConnectException al intentar conectar Bluetooth
     }
 
     @Test
     void testStartDriving_Success() throws ConnectException, PMVPhisicalException, ProceduralException {
-        // Aseguramos que el vehículo comience en estado 'Available'
         pmVehicle.setNotAvailb();
         controller.setBTconnection();
         controller.startDriving();
 
-        // Verificamos los resultados esperados
-        assertEquals(PMVehicle.PMVState.UnderWay, pmVehicle.getState(),
-                "El estado del vehículo debe cambiar a 'UnderWay'.");
-        assertTrue(journeyService.isInProgress(),
-                "El trayecto debe estar marcado como en progreso.");
+        assertEquals(PMVehicle.PMVState.UnderWay, pmVehicle.getState());//El estado del vehículo debe cambiar a UnderWay
+        assertTrue(journeyService.isInProgress());//El trayecto debe estar marcado como en progreso
     }
 
 
@@ -84,8 +76,7 @@ class SimulatedArduinoMicroControllerTest {
         controller = new SimulatedArduinoMicroController(
                 false, true, pmVehicle, journeyService, stationID, location, userAccount);
 
-        assertThrows(ConnectException.class, () -> controller.startDriving(),
-                "Se esperaba una ConnectException cuando Bluetooth no está conectado.");
+        assertThrows(ConnectException.class, () -> controller.startDriving());//ConnectException cuando Bluetooth no está conectado
     }
 
     @Test
@@ -93,16 +84,14 @@ class SimulatedArduinoMicroControllerTest {
         controller = new SimulatedArduinoMicroController(
                 true, false, pmVehicle, journeyService, stationID, location, userAccount);
 
-        assertThrows(ProceduralException.class, () -> controller.startDriving(),
-                "Se esperaba que el vehiculo ha sido previamente emparejado");
+        assertThrows(ProceduralException.class, () -> controller.startDriving());
     }
 
     @Test
     void testStartDriving_IncorrectVehicleState() throws ProceduralException {
         pmVehicle.setAvailb();
 
-        assertThrows(ProceduralException.class, () -> controller.startDriving(),
-                "Se esperaba una ProceduralException debido al estado incorrecto del vehículo.");
+        assertThrows(ProceduralException.class, () -> controller.startDriving());//ProceduralException debido al estado incorrecto del vehículo
     }
 
     @Test
@@ -111,8 +100,7 @@ class SimulatedArduinoMicroControllerTest {
         pmVehicle.setUnderWay();
         journeyService.setInProgress(true);
 
-        assertDoesNotThrow(() -> controller.stopDriving(),
-                "La detención del trayecto debe realizarse correctamente.");
+        assertDoesNotThrow(() -> controller.stopDriving());//La detención del trayecto
     }
 
     @Test
@@ -124,16 +112,14 @@ class SimulatedArduinoMicroControllerTest {
         pmVehicle.setUnderWay();
         journeyService.setInProgress(true);
 
-        assertThrows(ConnectException.class, () -> controller.stopDriving(),
-                "Se esperaba una ConnectException cuando Bluetooth no está conectado.");
+        assertThrows(ConnectException.class, () -> controller.stopDriving());//ConnectException cuando Bluetooth no está conectado
     }
 
     @Test
     void testStopDriving_VehicleNotUnderWay() throws ProceduralException {
         pmVehicle.setAvailb();
 
-        assertThrows(ProceduralException.class, () -> controller.stopDriving(),
-                "Se esperaba una ProceduralException debido al estado incorrecto del vehículo.");
+        assertThrows(ProceduralException.class, () -> controller.stopDriving());//ProceduralException debido al estado incorrecto del vehículo
     }
 
     @Test
@@ -142,13 +128,11 @@ class SimulatedArduinoMicroControllerTest {
         pmVehicle.setUnderWay();
         journeyService.setInProgress(false);
 
-        assertThrows(ProceduralException.class, () -> controller.stopDriving(),
-                "Se esperaba una ProceduralException porque el trayecto no está en progreso.");
+        assertThrows(ProceduralException.class, () -> controller.stopDriving());//ProceduralException porque el trayecto no está en progreso
     }
 
     @Test
     void testUndoBTConnection() {
-        assertDoesNotThrow(() -> controller.undoBTconnection(),
-                "La desconexión Bluetooth debe realizarse sin problemas.");
+        assertDoesNotThrow(() -> controller.undoBTconnection());//Bluetooth debe realizarse sin problemas
     }
 }

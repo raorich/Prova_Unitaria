@@ -1,6 +1,5 @@
-package domain;
-
 import data.*;
+import domain.JourneyService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -22,12 +21,11 @@ class JourneyServiceTest {
 
     @BeforeEach
     void setUp() {
-        // Inicializamos los objetos necesarios para la prueba
         ServiceID serviceID = new ServiceID("S1234");
         userAccount = new UserAccount("user123");
         vehicleID = new VehicleID("V1234");
-        originPoint = new GeographicPoint(40, -74);  // Nueva York
-        endPoint = new GeographicPoint(34, -118);    // Los Ángeles
+        originPoint = new GeographicPoint(40, -74);
+        endPoint = new GeographicPoint(34, -118);
         stationID = new StationID("ST123");
         importAmount = new BigDecimal("15.00");
 
@@ -67,21 +65,18 @@ class JourneyServiceTest {
     void testSetServiceFinish_Failure_InvalidDate() {
         // Configurar el entorno
         LocalDateTime now = LocalDateTime.now();
-        journeyService.setServiceInit(now);  // Establecer la fecha de inicio
+        journeyService.setServiceInit(now);
 
-        // Verificar que la fecha de inicio está correctamente configurada
-        assertEquals(now, journeyService.getServiceInit());
+        assertEquals(now, journeyService.getServiceInit());// Verificar que la fecha de inicio
 
-        // Intentar establecer la fecha de fin con una fecha anterior a la de inicio
         LocalDateTime invalidFinishDate = now.minusHours(1);
 
-        // Verificar que se lanza la excepción IllegalArgumentException
         assertThrows(IllegalArgumentException.class, () -> journeyService.setServiceFinish(invalidFinishDate));
     }
 
     @Test
     void testSetDistance_Success() {
-        journeyService.setDistance(1000.0f);  // 1 km
+        journeyService.setDistance(1000.0f);
         assertEquals(1000.0f, journeyService.getDistance());
     }
 
@@ -92,7 +87,7 @@ class JourneyServiceTest {
 
     @Test
     void testSetDuration_Success() {
-        journeyService.setDuration(30);  // 30 minutos
+        journeyService.setDuration(30);
         assertEquals(30, journeyService.getDuration());
     }
 
@@ -103,7 +98,7 @@ class JourneyServiceTest {
 
     @Test
     void testSetAvgSpeed_Success() {
-        journeyService.setAvgSpeed(25.5f);  // 25.5 km/h
+        journeyService.setAvgSpeed(25.5f);
         assertEquals(25.5f, journeyService.getAvgSpeed());
     }
 

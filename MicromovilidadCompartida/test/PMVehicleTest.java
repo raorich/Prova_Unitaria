@@ -1,7 +1,6 @@
-package micromobility;
-
 import data.*;
 import exceptions.*;
+import micromobility.PMVehicle;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -14,32 +13,29 @@ public class PMVehicleTest {
 
     @BeforeEach
     public void setUp() {
-        vehicleID = new VehicleID("V1234"); // Usamos un ID válido
-        vehicle = new PMVehicle(vehicleID); // Creación del vehículo
+        vehicleID = new VehicleID("V1234");
+        vehicle = new PMVehicle(vehicleID);
     }
     @Test
     public void testPMVehicleCreation() {
-        // Comprobamos que el vehículo se haya creado correctamente
         assertNotNull(vehicle);
-        assertEquals(PMVehicle.PMVState.Available, vehicle.getState()); // El estado inicial debería ser "Available"
+        assertEquals(PMVehicle.PMVState.Available, vehicle.getState());
         assertEquals(vehicleID, vehicle.getVehicleID()); // Verificamos que el ID del vehículo es el que pasamos
     }
     @Test
     public void testSetNotAvailb_Success() throws ProceduralException {
-        vehicle.setNotAvailb(); // Intentamos marcar el vehículo como no disponible
+        vehicle.setNotAvailb();
         assertEquals(PMVehicle.PMVState.NotAvailable, vehicle.getState()); // Verificamos que el estado cambió
     }
     @Test
     public void testGetLocation() {
-        // Verificamos que la ubicación del vehículo sea null inicialmente
         assertNull(vehicle.getLocation());
     }
 
     @Test
     public void testSetLocation() {
-        GeographicPoint location = new GeographicPoint(40, -74); // Un ejemplo de ubicación (latitud y longitud)
+        GeographicPoint location = new GeographicPoint(40, -74);
         vehicle.setLocation(location);
-        // Verificamos que la ubicación se haya actualizado correctamente
         assertEquals(location, vehicle.getLocation());
     }
 
@@ -47,28 +43,26 @@ public class PMVehicleTest {
     public void testSetNotAvailb_FailWhenUnderWay() {
         try {
             vehicle.setNotAvailb();
-            vehicle.setUnderWay(); // Primero lo ponemos en uso
-            vehicle.setNotAvailb(); // Intentamos marcarlo como no disponible mientras está en uso
+            vehicle.setUnderWay();
+            vehicle.setNotAvailb();
             fail("Se esperaba ProceduralException.");
         } catch (ProceduralException e) {
-            // Verificamos que la excepción sea la esperada
             assertEquals("No se puede marcar el vehículo como no disponible mientras está en uso.", e.getMessage());
         }
     }
 
     @Test
     public void testSetUnderWay_Success() throws ProceduralException {
-        vehicle.setNotAvailb(); // Primero lo marcamos como no disponible
-        vehicle.setUnderWay(); // Luego lo ponemos en marcha
+        vehicle.setNotAvailb();
+        vehicle.setUnderWay();
         assertEquals(PMVehicle.PMVState.UnderWay, vehicle.getState()); // Verificamos que el estado cambió correctamente
     }
     @Test
     public void testSetUnderWay_FailWhenAvailable() {
         try {
-            vehicle.setUnderWay(); // Intentamos marcar el vehículo como en marcha mientras está disponible
+            vehicle.setUnderWay();
             fail("Se esperaba ProceduralException.");
         } catch (ProceduralException e) {
-            // Verificamos que la excepción sea la correcta
             assertEquals("El vehículo no está no esta emparejado.", e.getMessage());
         }
     }
@@ -76,11 +70,10 @@ public class PMVehicleTest {
     public void testSetAvailb_FailWhenUnderWay() {
         try {
             vehicle.setNotAvailb();
-            vehicle.setUnderWay(); // Lo ponemos en marcha
-            vehicle.setAvailb(); // Intentamos marcarlo como disponible mientras está en uso
+            vehicle.setUnderWay();
+            vehicle.setAvailb();
             fail("Se esperaba ProceduralException.");
         } catch (ProceduralException e) {
-            // Verificamos que la excepción es la esperada
             assertEquals("No se puede marcar el vehículo como disponible mientras está en uso.", e.getMessage());
         }
     }
