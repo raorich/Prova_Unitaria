@@ -2,24 +2,25 @@
 
 ## Descripción
 Este proyecto simula un sistema de **micromovilidad compartida**, diseñado para gestionar vehículos compartidos, como bicicletas y scooters, mediante una aplicación móvil. Los usuarios pueden emparejarse con vehículos, iniciar trayectos, y administrar la disponibilidad y ubicación de los mismos.
+## Característiques Principals
+- **Gestió de Viatges:** Inici, finalització i càlcul de distàncies reals entre ubicacions.
+- **Lectura de Codis QR:** Simulació de verificació de vehicles a través de fitxers QR locals.
+- **Pagaments Virtuals:** Deducció automàtica de saldo amb validació de fons suficients.
+- **Connexions Simulades:** Bluetooth i connexions al servidor amb probabilitats realistes d'error.
+- **Gestió d'Errors:** Maneig d'excepcions i condicions específiques per garantir la integritat del sistema.
 
-## Requisitos
-- **Java 11+**
-- **JUnit 5** para pruebas unitarias
-- **Maven** para la construcción del proyecto
+## Estructura del Projecte
+- **`data`:** Models de dades com ubicacions, comptes d'usuari i identificadors.
+- **`micromobility`:** Lògica principal de control de viatges i vehicles.
+- **`payment`:** Gestió de moneder virtual i processament de pagaments.
+- **`services`:** Simulació de servidor i comunicació entre components.
+- **`QRDecoder`:** Implementació del procés de lectura de codis QR.
 
-## Estructura del Proyecto
-- **`data`**: Contiene las clases para representar las entidades clave del sistema como `UserAccount`, `VehicleID`, `StationID`.
-- **`services`**: Define los servicios necesarios para la funcionalidad del sistema como `Server`, `UnbondedBTSignal`, `QRDecoder`.
-- **`micromobility`**: Contiene las clases `PMVehicle` y `JourneyService` para la gestión de vehículos y trayectos.
-- **`handler`**: Contiene la clase `JourneyRealizeHandler`, responsable de manejar los eventos del caso de uso "Realizar desplazamiento".
+## Requisits del Sistema
+- **Java 11 o superior**
+- **IDE Recomanat:** IntelliJ IDEA, Eclipse o qualsevol IDE compatible amb Java.
 
-## Funcionalidades
-- **Emparejamiento de vehículos**: Los usuarios pueden emparejarse con un vehículo a través de un código QR.
-- **Gestión de trayectos**: Iniciar y detener trayectos, calcular distancia, duración y velocidad.
-- **Cambio de estado de vehículos**: Los vehículos pueden pasar entre los estados "Disponible", "En uso" y "No disponible".
-  
-## Instalación
-1. Clona este repositorio:
+## Instal·lació i Execució
+1. Cloneu el repositori:
    ```bash
-   git clone <repo_url>
+   git clone https://github.com/usuari/micromobility-system.git
