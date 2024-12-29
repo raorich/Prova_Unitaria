@@ -1,6 +1,6 @@
 import data.ServiceID;
 import data.UserAccount;
-import domain.JourneyService;
+import micromobility.JourneyService;
 import exceptions.NotEnoughWalletException;
 import micromobility.payment.Wallet;
 import micromobility.payment.WalletPayment;

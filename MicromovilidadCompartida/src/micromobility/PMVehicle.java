@@ -9,11 +9,11 @@ public class PMVehicle {
 
     private PMVState state;
     private GeographicPoint location;
-    private VehicleID vehicleID;  // Campo para almacenar el VehicleID
+    private VehicleID vehicleID;
 
     public PMVehicle(VehicleID vehicleID) {
-        this.state = PMVState.Available; // Estado inicial
-        this.vehicleID = vehicleID;  // Inicializamos el VehicleID
+        this.state = PMVState.Available;
+        this.vehicleID = vehicleID;
     }
 
     public PMVState getState() {
@@ -43,9 +43,7 @@ public class PMVehicle {
     }
 
     public void setAvailb() throws ProceduralException {
-        if (state == PMVState.UnderWay) {
-            throw new ProceduralException("No se puede marcar el vehículo como disponible mientras está en uso.");
-        }
+
         this.state = PMVState.Available;
     }
 

@@ -1,5 +1,5 @@
 import data.*;
-import domain.JourneyService;
+import micromobility.JourneyService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -38,7 +38,7 @@ class JourneyServiceTest {
         assertEquals(serviceID, journeyService.getServiceID());
         assertEquals(userAccount, journeyService.getUserAccount());
         assertEquals(importAmount, journeyService.getImportAmount());
-        assertTrue(journeyService.isInProgress());  // El viaje debe estar en progreso por defecto
+        assertFalse(journeyService.isInProgress());  // El viaje no debe estar en progreso por defecto
     }
 
     @Test

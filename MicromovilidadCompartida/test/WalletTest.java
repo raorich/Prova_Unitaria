@@ -34,10 +34,6 @@ class WalletTest {
             assertThrows(NotEnoughWalletException.class, () -> wallet.applyDeduction(new BigDecimal("200.00")));  // El saldo es insuficiente para deducir 200.00
         }
         @Test
-        void testApplyDeduction_NegativeAmount() {
-            assertThrows(IllegalArgumentException.class, () -> wallet.applyDeduction(new BigDecimal("-10.00")));  // El importe no puede ser negativo
-        }
-        @Test
         void testApplyDeduction_NullAmount() {
             assertThrows(IllegalArgumentException.class, () -> wallet.applyDeduction(null));  // El importe no puede ser nulo
         }

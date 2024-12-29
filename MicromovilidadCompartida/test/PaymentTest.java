@@ -1,6 +1,5 @@
 import data.*;
-import domain.*;
-import exceptions.*;
+import micromobility.JourneyService;
 import micromobility.payment.Payment;
 import micromobility.payment.Wallet;
 import micromobility.payment.WalletPayment;

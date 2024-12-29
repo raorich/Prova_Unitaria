@@ -1,16 +1,15 @@
 package micromobility.payment;
 
-import domain.JourneyService;
+import micromobility.JourneyService;
 import data.UserAccount;
-import exceptions.NotEnoughWalletException;
 
 import java.math.BigDecimal;
 
 public class Payment {
 
-    protected JourneyService journeyService; // Asociación con el servicio
-    protected UserAccount user; // Asociación con el usuario
-    protected BigDecimal amount; // Importe del pago
+    protected JourneyService journeyService;
+    protected UserAccount user;
+    protected BigDecimal amount;
 
     public Payment(JourneyService journeyService, UserAccount user, BigDecimal amount) {
         if (journeyService == null || user == null) {

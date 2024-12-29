@@ -5,8 +5,6 @@ import exceptions.ConnectException;
 public class SimulatedUnbondedBTSignal implements UnbondedBTSignal {
 
     private boolean isBluetoothAvailable;
-
-    // Constructor que permite simular la disponibilidad de Bluetooth.
     public SimulatedUnbondedBTSignal(boolean isBluetoothAvailable) {
         this.isBluetoothAvailable = isBluetoothAvailable;
     }

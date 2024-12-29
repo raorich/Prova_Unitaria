@@ -4,13 +4,9 @@ import java.util.UUID;
 
 public final class ServiceID {
     private final String serviceId;
-
-    // Constructor que genera un UUID único
     public ServiceID() {
         this.serviceId = UUID.randomUUID().toString();  // Asignar un UUID único como identificador
     }
-
-    // Si deseas que el ServiceID pueda recibir un valor como parámetro:
     public ServiceID(String serviceId) {
         if (serviceId == null || serviceId.trim().isEmpty()) {
             throw new IllegalArgumentException("ServiceID cannot be null or empty");

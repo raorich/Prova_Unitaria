@@ -1,7 +1,7 @@
 package services;
 
 import data.*;
-import domain.JourneyService;
+import micromobility.JourneyService;
 import exceptions.*;
 import services.smartfeatures.QRDecoder;
 import services.smartfeatures.SimulatedQRDecoder;
@@ -17,7 +17,7 @@ public class ServerSimulated implements Server {
 
     public ServerSimulated() {
         this.qrDecoder = new SimulatedQRDecoder();
-        this.journeyCache = new ArrayList<>(); // Inicializamos el caché
+        this.journeyCache = new ArrayList<>();
     }
 
     @Override
@@ -60,19 +60,13 @@ public class ServerSimulated implements Server {
 
     @Override
     public void unPairRegisterService(JourneyService s) throws PairingNotFoundException {
-        // Verificar si el objeto JourneyService es nulo o no tiene datos relevantes
         if (s == null) {
             throw new PairingNotFoundException("No se encontró la información del emparejamiento en el servidor.");
         }
-
-        // Aquí podrías realizar más validaciones en el objeto JourneyService si es necesario
         if (s.getVehicleID() == null || s.getUserAccount() == null) {
             throw new PairingNotFoundException("No se encontró información suficiente para el emparejamiento.");
         }
-
-        // Asumir que la información es válida y se puede proceder a actualizar el servidor
         try {
-            // Aquí iría la lógica para actualizar el registro en el servidor.
             // Actualizar el estado del emparejamiento en la base de datos
             System.out.println("Actualizando emparejamiento para el vehículo " + s.getVehicleID().getVehicleId());
             System.out.println("Usuario: " + s.getUserAccount().getAccountId());
@@ -82,13 +76,10 @@ public class ServerSimulated implements Server {
             System.out.println("Distancia recorrida: " + s.getDistance() + " metros");
             System.out.println("Importe del servicio: " + s.getImportAmount());
 
-            // Aquí también podrías almacenar la información en alguna base de datos o servicio de persistencia
-
-            // Después de la actualización, imprimir el mensaje de éxito
             System.out.println("Servicio registrado correctamente en el servidor.");
 
         } catch (Exception e) {
-            // Manejo de excepciones genéricas, si ocurre un error en el proceso
+            // Manejo de excepciones genéricas
             throw new PairingNotFoundException("Hubo un error al intentar registrar el servicio: " + e.getMessage());
         }
     }
@@ -97,7 +88,6 @@ public class ServerSimulated implements Server {
     public void registerLocation(VehicleID veh, StationID st) {
         System.out.println("Ubicación del vehículo registrada en el servidor.");
     }
-    // Simulación de la conexión al servidor
     private boolean isConnected() {
         return Math.random() > 0.2; // Simulamos un 80% de éxito en la conexión
     }
@@ -108,26 +98,18 @@ public class ServerSimulated implements Server {
             throw new ConnectException("Unable to connect to the server.");
         }
 
-        // Verificamos que el importe sea válido (positivo)
-        if (imp == null || imp.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("The payment amount must be positive.");
-        }
-
-        // Imprimir el detalle del pago registrado (simulando el registro)
+        // Imprimir el detalle del pago registrado simulando el registro
         System.out.println("Pago registrado en el servidor:");
-        System.out.println("ServiceID: " + servID.getServiceId());
         System.out.println("Usuario: " + user.getAccountId());
         System.out.println("Importe: " + imp);
         System.out.println("Método de pago: " + (payMeth == 'W' ? "Monedero" : "Otro método"));
 
-        // Aquí agregamos el servicio al caché de pruebas (como ejemplo)
         JourneyService journeyService = new JourneyService(servID, user, imp, payMeth);
         journeyCache.add(journeyService);
 
         System.out.println("Pago registrado correctamente.");
     }
 
-    // Método para eliminar el JourneyService del caché
     public void removeJourneyFromCache(JourneyService s) {
         if (s == null) {
             System.out.println("El JourneyService proporcionado es nulo.");
@@ -137,15 +119,12 @@ public class ServerSimulated implements Server {
         // Intentamos eliminar el JourneyService del caché
         boolean removed = journeyCache.remove(s);
 
-        // Comprobamos si fue eliminado correctamente
         if (removed) {
             System.out.println("JourneyService ha sido eliminado del caché.");
         } else {
             System.out.println("No se encontró el JourneyService en el caché.");
         }
     }
-
-    // Método para agregar un JourneyService al caché (para fines de prueba)
     public void addJourneyToCache(JourneyService s) {
         journeyCache.add(s);
         System.out.println("JourneyService ha sido agregado al caché.");

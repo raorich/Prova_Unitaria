@@ -1,7 +1,6 @@
 import data.*;
-import domain.JourneyService;
+import micromobility.JourneyService;
 import exceptions.*;
-import exceptions.PairingNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import services.ServerSimulated;

@@ -1,4 +1,4 @@
-package domain;
+package micromobility;
 
 import data.*;
 import java.math.BigDecimal;
@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 public class JourneyService {
     private LocalDateTime initDate;   // Fecha y hora de inicio
     private LocalDateTime endDate;    // Fecha y hora de fin
-    private boolean inProgress;       // Estado del trayecto (en progreso o no)
+    private boolean inProgress;       // Estado del trayecto
     private float distance;           // Distancia recorrida en metros
     private int duration;             // Duración del trayecto en minutos
     private float avgSpeed;           // Velocidad promedio en km/h
@@ -23,16 +23,12 @@ public class JourneyService {
 
     // Constructor con parámetros
     public JourneyService(ServiceID servID, UserAccount user, BigDecimal imp, char payMeth) {
-        // Llenamos los valores con los parámetros que recibimos
-        this.initDate = LocalDateTime.now();  // Se asume que el trayecto inicia al crear el objeto
-        this.inProgress = true;               // El trayecto comienza en progreso
+        this.initDate = LocalDateTime.now();
+        this.inProgress = false;
         this.importAmount = imp;
         this.userAccount = user;
-        this.serviceID = serviceID; // Asignamos el ServiceID
-        // Asumimos que el resto de los atributos podrían ser establecidos en otro momento
+        this.serviceID = serviceID;
     }
-
-    // Métodos para inicialización y finalización del servicio
     public void setServiceInit(LocalDateTime initDate) {
         if (initDate == null) throw new IllegalArgumentException("La fecha de inicio no puede ser nula.");
         this.initDate = initDate;
@@ -55,7 +51,6 @@ public class JourneyService {
         return this.endDate;
     }
 
-    // Métodos para distancia, duración y velocidad promedio
     public void setDistance(float distance) {
         if (distance < 0) throw new IllegalArgumentException("La distancia no puede ser negativa.");
         this.distance = distance;
@@ -127,6 +122,10 @@ public class JourneyService {
         return userAccount;
     }
 
+    public LocalDateTime getEndDate() {
+        return endDate;
+    }
+
     public void setVehicleID(VehicleID vehicleID) {
         this.vehicleID = vehicleID;
     }
@@ -151,3 +150,5 @@ public class JourneyService {
         return this.serviceID;
     }
 }
+
+

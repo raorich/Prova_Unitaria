@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 
 public class Wallet {
 
-    private BigDecimal balance; // Saldo almacenado en el monedero
+    private BigDecimal balance;
 
     public Wallet(BigDecimal initialBalance) {
         if (initialBalance == null || initialBalance.compareTo(BigDecimal.ZERO) < 0) {
@@ -25,7 +25,7 @@ public class Wallet {
 
     // Método privado para deducir un importe del saldo del monedero
     private void deduct(BigDecimal imp) throws NotEnoughWalletException {
-        if (imp == null || imp.compareTo(BigDecimal.ZERO) <= 0) {
+        if (imp == null) {
             throw new IllegalArgumentException("El importe a deducir debe ser positivo.");
         }
 

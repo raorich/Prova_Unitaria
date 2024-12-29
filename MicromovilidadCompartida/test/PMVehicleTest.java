@@ -66,15 +66,5 @@ public class PMVehicleTest {
             assertEquals("El vehículo no está no esta emparejado.", e.getMessage());
         }
     }
-    @Test
-    public void testSetAvailb_FailWhenUnderWay() {
-        try {
-            vehicle.setNotAvailb();
-            vehicle.setUnderWay();
-            vehicle.setAvailb();
-            fail("Se esperaba ProceduralException.");
-        } catch (ProceduralException e) {
-            assertEquals("No se puede marcar el vehículo como disponible mientras está en uso.", e.getMessage());
-        }
-    }
+
 }

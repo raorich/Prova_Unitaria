@@ -1,5 +1,5 @@
 package services;
-import domain.JourneyService;
+import micromobility.JourneyService;
 import exceptions.*;
 import data.*;
 import services.smartfeatures.QRDecoder;

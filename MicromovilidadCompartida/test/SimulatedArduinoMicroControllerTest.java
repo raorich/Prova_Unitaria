@@ -1,9 +1,9 @@
 import static org.junit.jupiter.api.Assertions.*;
 
 import data.*;
+import micromobility.JourneyService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import domain.*;
 import micromobility.PMVehicle;
 import services.smartfeatures.SimulatedArduinoMicroController;
 import exceptions.ConnectException;
