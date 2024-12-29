@@ -25,3 +25,4 @@ public class SimulatedQRDecoder implements QRDecoder {
         throw new CorruptedImgException("Código QR no reconocido");
     }
 }
+
